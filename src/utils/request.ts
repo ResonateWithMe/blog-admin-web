@@ -51,6 +51,7 @@ const errorHandler = (error: { response: Response }): null => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+  prefix: process.env.NODE_ENV === 'production' ? 'http://122.51.213.87:8081/' : '',
 });
 
 export default request;

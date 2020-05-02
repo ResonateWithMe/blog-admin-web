@@ -5,7 +5,7 @@ origin_address=git@github.com:ResonateWithMe/blog-admin-web.git
 
 function build() {
     echo "start build..."
-    yarn install && yarn build
+    npm install && npm run build
 }
 
 function pushBuild() {
