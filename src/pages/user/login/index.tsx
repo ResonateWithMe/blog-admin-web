@@ -47,16 +47,16 @@ const Login: React.FC<LoginProps> = (props) => {
 
   const getImg = () => {
     setLoadingBlob(true);
-    getVerifyCode().then(res => {
+    getVerifyCode().then((res) => {
       setLoadingBlob(false);
       if (!res) return;
-      setBlobUrl(window.URL.createObjectURL(res))
-    })
-  }
+      setBlobUrl(window.URL.createObjectURL(res));
+    });
+  };
 
   useEffect(() => {
     getImg();
-  }, [])
+  }, []);
 
   return (
     <div className={styles.main}>
@@ -87,7 +87,7 @@ const Login: React.FC<LoginProps> = (props) => {
             ]}
           />
           <CaptchaImg
-            name="captchaImg"
+            name="verifyCode"
             placeholder="验证码"
             blobUrl={blobUrl}
             imgClick={getImg}
