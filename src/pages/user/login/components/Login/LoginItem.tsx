@@ -4,10 +4,10 @@ import omit from 'omit.js';
 import { FormItemProps } from 'antd/es/form/FormItem';
 import { getFakeCaptcha } from '@/services/login';
 
+import { LoadingOutlined } from '@ant-design/icons';
 import ItemMap from './map';
 import LoginContext, { LoginContextProps } from './LoginContext';
 import styles from './index.less';
-import { LoadingOutlined } from '@ant-design/icons';
 
 export type WrappedLoginItemProps = LoginItemProps;
 export type LoginItemKeyType = keyof typeof ItemMap;
@@ -33,9 +33,9 @@ export interface LoginItemProps extends Partial<FormItemProps> {
   customProps?: { [key: string]: unknown };
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   tabUtil?: LoginContextProps['tabUtil'];
-  blobUrl?: string,
-  imgClick?: () => void,
-  loadingBlob?: boolean,
+  blobUrl?: string;
+  imgClick?: () => void;
+  loadingBlob?: boolean;
 }
 
 const FormItem = Form.Item;
@@ -148,13 +148,19 @@ const LoginItem: React.FC<LoginItemProps> = (props) => {
     );
   }
   if (type === 'CaptchaImg') {
-    const addonAfter = loadingBlob ? <LoadingOutlined /> : (
-      <img  src={blobUrl} alt="captchaImg" width="100%" height="100%" />
+    const addonAfter = loadingBlob ? (
+      <LoadingOutlined />
+    ) : (
+      <img src={blobUrl} alt="captchaImg" width="100%" height="100%" />
     );
     return (
       <FormItem name={name} {...options}>
         <Input
-          addonAfter={<div onClick={imgClick} className={styles.captchaImg}>{addonAfter}</div>}
+          addonAfter={
+            <div onClick={imgClick} className={styles.captchaImg}>
+              {addonAfter}
+            </div>
+          }
           {...customProps}
           {...otherProps}
         />

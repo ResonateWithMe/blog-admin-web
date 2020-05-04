@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, DatePicker, Input, Modal, Radio, Select, Steps } from 'antd';
 
-import { TableListItem } from '../data.d';
+import { TableListItem } from '../list/data';
 
 export interface FormValueType extends Partial<TableListItem> {
   target?: string;
@@ -186,7 +186,8 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       title="规则配置"
       visible={updateModalVisible}
       footer={renderFooter()}
-      onCancel={() => handleUpdateModalVisible()}
+      onCancel={() => handleUpdateModalVisible(false, values)}
+      afterClose={() => handleUpdateModalVisible()}
     >
       <Steps style={{ marginBottom: 28 }} size="small" current={currentStep}>
         <Step title="基本信息" />
