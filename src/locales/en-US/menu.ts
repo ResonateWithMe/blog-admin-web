@@ -26,7 +26,7 @@ export default {
   'menu.list.basic-list': 'Basic List',
   'menu.list.card-list': 'Card List',
   'menu.list.search-list': 'Search List',
-  'menu.list.search-list.articles': 'Search List(articles)',
+  'menu.list.search-list.articles': 'Search List(article)',
   'menu.list.search-list.projects': 'Search List(projects)',
   'menu.list.search-list.applications': 'Search List(applications)',
   'menu.profile': 'Profile',

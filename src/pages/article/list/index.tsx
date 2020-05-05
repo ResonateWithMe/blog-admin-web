@@ -1,11 +1,12 @@
 import { Button, Divider, message, Space, Table } from 'antd';
+import { history } from '@@/core/history';
 import React, { useState, useRef, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { ActionType } from '@ant-design/pro-table';
 import CreateForm from '../components/CreateForm';
 import UpdateForm, { FormValueType } from '../components/UpdateForm';
 import AdvancedSearchForm from '../components/AdvancedSearchForm';
-import { queryRule, updateRule, addRule } from './service';
+import { queryArticleList, updateRule, addRule } from '../../../services/article';
 import styles from './index.less';
 
 /**
@@ -66,7 +67,7 @@ const onSelectChange = (selectedRowKeys, setSelectedRowKeys) => {
  * @constructor
  */
 const getTableDataSource = (setTableDataSource: (data: []) => void) => {
-  queryRule({
+  queryArticleList({
     currentPage: 1,
     pageSize: 10,
   }).then((res) => {
@@ -82,10 +83,9 @@ const getTableDataSource = (setTableDataSource: (data: []) => void) => {
  * @constructor
  * @param articleId
  */
-const goEditPage = (articleId: number, history: object) => {
-  // @ts-ignore
+const goEditPage = (articleId: number) => {
   history.push({
-    pathname: '/articles/edit',
+    pathname: '/article/edit',
     query: {
       id: articleId,
     },
@@ -93,11 +93,10 @@ const goEditPage = (articleId: number, history: object) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handleDelete(articleId: number, history: object) {}
+function handleDelete(articleId: number) {}
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TableList: React.FC<{}> = (props) => {
-  // @ts-ignore
-  const { history } = props;
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
   const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
   const [stepFormValues, setStepFormValues] = useState({});
@@ -180,8 +179,8 @@ const TableList: React.FC<{}> = (props) => {
       key: 'x',
       render: (text: { articleId: number }) => (
         <Space>
-          <a onClick={() => goEditPage(text.articleId, history)}>编辑</a>
-          <a onClick={() => handleDelete(text.articleId, history)}>删除</a>
+          <a onClick={() => goEditPage(text.articleId)}>编辑</a>
+          <a onClick={() => handleDelete(text.articleId)}>删除</a>
         </Space>
       ),
     },

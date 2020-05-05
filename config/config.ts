@@ -71,16 +71,28 @@ export default defineConfig({
               ],
             },
             {
-              name: 'list.table-list',
+              name: 'article',
               icon: 'smile',
-              path: '/articles/list',
-              component: './articles/list',
-            },
-            {
-              name: 'list.table-list',
-              icon: 'smile',
-              path: '/articles/edit',
-              component: './articles/edit',
+              path: '/article',
+              component: '../layouts/BlankLayout',
+              routes: [
+                {
+                  name: 'list',
+                  icon: 'smile',
+                  path: '/article/list',
+                  component: './article/list',
+                },
+                {
+                  name: 'edit',
+                  icon: 'smile',
+                  path: '/article/edit',
+                  hideInMenu: true,
+                  component: './article/edit',
+                },
+                {
+                  component: './404',
+                },
+              ],
             },
             {
               component: './404',
