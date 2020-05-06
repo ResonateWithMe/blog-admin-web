@@ -1,28 +1,9 @@
 import request from 'umi-request';
 import { TableListParams } from '@/pages/article/list/data';
-
-interface PaginationParams {
-  pageSize?: number;
-  currentPage?: number;
-}
-
-interface Article {
-  articleCategoryId: number;
-  articleCategoryName: string;
-  articleContent: string;
-  articleCoverImage: string;
-  articleId: number;
-  articleStatus: number;
-  articleSubUrl: string;
-  articleTags: string;
-  articleTitle: string;
-  articleViews: number;
-  createTime: string;
-  enableComment: boolean;
-  isDeleted: number;
-  key: number;
-  updateTime: Date;
-}
+import { Result } from '@/types/result';
+import { Article } from '@/types/article';
+import { ArticleRelevant } from '@/types/article_relevant';
+import { PaginationParams } from '@/types/pagination_params';
 
 export async function queryArticleList(params?: TableListParams) {
   return request('/api/article/list', {
@@ -30,7 +11,7 @@ export async function queryArticleList(params?: TableListParams) {
   });
 }
 
-export async function queryArticle(articleId: number) {
+export async function queryArticle(articleId: number): Promise<Result<ArticleRelevant>> {
   return request(`/api/article/detail/${articleId}`);
 }
 

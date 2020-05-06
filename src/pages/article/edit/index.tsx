@@ -8,6 +8,10 @@ import { queryArticle, getAllCategories, updateArticle } from '@/services/articl
 import EditableTagGroup from '../components/EditableTagGroup';
 import styles from './index.less';
 import { UploadOutlined } from '@ant-design/icons/lib';
+import { Category } from '@/types/category';
+import { Article } from '@/types/article';
+import { Result } from '@/types/result';
+import { ArticleRelevant } from '@/types/article_relevant';
 
 interface Query {
   id: number;
@@ -24,32 +28,6 @@ interface Location {
 
 interface EditProps {
   location: Location;
-}
-
-interface Category {
-  categoryIcon: string;
-  categoryId: number;
-  categoryName: string;
-  categoryRank: number;
-  createTime: Date;
-}
-
-interface Article {
-  articleCategoryId: number;
-  articleCategoryName: string;
-  articleContent: string;
-  articleCoverImage: string;
-  articleId: number;
-  articleStatus: number;
-  articleSubUrl: string;
-  articleTags: string;
-  articleTitle: string;
-  articleViews: number;
-  createTime: string;
-  enableComment: boolean;
-  isDeleted: number;
-  key: number;
-  updateTime: Date;
 }
 
 const tailLayout = {
@@ -107,7 +85,10 @@ const Edit: React.FC<EditProps> = (props) => {
     setSpinning(true);
     Promise.all([queryArticle(query.id), getAllCategories()])
       .then((values) => {
-        const [articleResult, allCategoriesResult] = values;
+        const [articleResult, allCategoriesResult]: [
+          Result<ArticleRelevant>,
+          Result<Category[]>,
+        ] = values;
         if (articleResult.resultCode !== 200 || allCategoriesResult.resultCode !== 200) {
           return;
         }
