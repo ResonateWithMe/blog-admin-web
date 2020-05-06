@@ -119,7 +119,7 @@ const Edit: React.FC<EditProps> = (props) => {
     onChange: (info) => {
       // eslint-disable-next-line no-shadow
       let fileList = [...info.fileList];
-      fileList = fileList.slice(-2);
+      fileList = fileList.slice(-1);
       fileList = fileList.map((file) => {
         if (file.response) {
           // eslint-disable-next-line no-param-reassign
