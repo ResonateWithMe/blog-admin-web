@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Row, Col, Input, Button } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import styles from './AdvancedSearchForm.less';
+import styles from './styles/AdvancedSearchForm.less';
 
 const AdvancedSearchForm = () => {
   const [expand, setExpand] = useState(false);

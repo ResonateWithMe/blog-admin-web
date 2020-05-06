@@ -3,12 +3,26 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Input, Button, Select, Spin } from 'antd';
+import { Form, Input, Button, Select, Spin, Upload, message } from 'antd';
 import { queryArticle, getAllCategories, updateArticle } from '@/services/article';
+import EditableTagGroup from '../components/EditableTagGroup';
 import styles from './index.less';
+import { UploadOutlined } from '@ant-design/icons/lib';
+
+interface Query {
+  id: number;
+}
+
+interface Location {
+  hash: string;
+  key: string;
+  pathname: string;
+  query: Query;
+  search: string;
+  state: object;
+}
 
 interface EditProps {
-  id: number;
   location: Location;
 }
 
@@ -61,6 +75,8 @@ const Edit: React.FC<EditProps> = (props) => {
   } = props;
   const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [spinning, setSpinning] = useState<boolean>(false);
+  const [articleTags, setArticleTags] = useState<string[]>([]);
+
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -98,10 +114,12 @@ const Edit: React.FC<EditProps> = (props) => {
         const articles = articleResult.data || {};
         const articleData: Article = articles.article || {};
         const currentCategoryData: Category[] = articles.categories || [];
+        setArticleTags(articleData.articleTags.split(','));
         form.setFieldsValue({
           articleTitle: articleData.articleTitle,
-          articleContentText: articleData.articleContent,
+          articleTags: articleData.articleTags.split(','),
           categories: currentCategoryData.map((item) => item.categoryName),
+          articleContentText: articleData.articleContent,
         });
         setCategoriesAll(allCategoriesResult.data || []);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -111,6 +129,26 @@ const Edit: React.FC<EditProps> = (props) => {
       .finally(() => {
         setSpinning(false);
       });
+  };
+
+  // @ts-ignore
+  const uploadProps = {
+    name: 'file',
+    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    // @ts-ignore
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
   };
 
   useEffect(() => {
@@ -148,6 +186,24 @@ const Edit: React.FC<EditProps> = (props) => {
                   );
                 })}
               </Select>
+            </Form.Item>
+            <Form.Item
+              label="标签"
+              name="articleTags"
+              rules={[{ required: true, message: '请输入文章标签!' }]}
+            >
+              <EditableTagGroup tags={articleTags} setTags={setArticleTags} />
+            </Form.Item>
+            <Form.Item
+              label="封面"
+              name="articleCoverImage"
+              rules={[{ required: true, message: '请上传文章封面!' }]}
+            >
+              <Upload {...uploadProps}>
+                <Button>
+                  <UploadOutlined /> 点击上传
+                </Button>
+              </Upload>
             </Form.Item>
             <Form.Item
               name="articleContentText"
