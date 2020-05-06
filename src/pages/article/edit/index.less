@@ -6,4 +6,19 @@
 
 .edit {
   background-color: transparent;
+  .uploadListInline .ant-upload-list-item {
+    float: left;
+    width: 200px;
+    margin-right: 8px;
+  }
+
+  [class*='-upload-list-rtl'] .ant-upload-list-item {
+    float: right;
+  }
+  .uploadListInline .ant-upload-animate-enter {
+    animation-name: uploadAnimateInlineIn;
+  }
+  .uploadListInline .ant-upload-animate-leave {
+    animation-name: uploadAnimateInlineOut;
+  }
 }

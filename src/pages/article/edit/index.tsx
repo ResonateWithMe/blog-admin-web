@@ -3,15 +3,16 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Input, Button, Select, Spin, Upload, message } from 'antd';
+import { Form, Input, Button, Select, Spin, Upload } from 'antd';
 import { queryArticle, getAllCategories, updateArticle } from '@/services/article';
-import EditableTagGroup from '../components/EditableTagGroup';
-import styles from './index.less';
 import { UploadOutlined } from '@ant-design/icons/lib';
-import { Category } from '@/types/category';
-import { Article } from '@/types/article';
-import { Result } from '@/types/result';
-import { ArticleRelevant } from '@/types/article_relevant';
+import { Category } from '@/interface/category';
+import { Article } from '@/interface/article';
+import { Result } from '@/interface/result';
+import { ArticleRelevant } from '@/interface/article_relevant';
+import styles from './index.less';
+import EditableTagGroup from '../components/EditableTagGroup';
+import { UploadProps } from 'antd/es/upload/interface';
 
 interface Query {
   id: number;
@@ -54,7 +55,7 @@ const Edit: React.FC<EditProps> = (props) => {
   const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
-
+  const [fileList, setFileList] = useState([]);
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -113,23 +114,25 @@ const Edit: React.FC<EditProps> = (props) => {
   };
 
   // @ts-ignore
-  const uploadProps = {
-    name: 'file',
+  const uploadProps: UploadProps = {
     action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    headers: {
-      authorization: 'authorization-text',
+    onChange: (info) => {
+      // eslint-disable-next-line no-shadow
+      let fileList = [...info.fileList];
+      fileList = fileList.slice(-2);
+      fileList = fileList.map((file) => {
+        if (file.response) {
+          // eslint-disable-next-line no-param-reassign
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      // @ts-ignore
+      setFileList(fileList);
     },
-    // @ts-ignore
-    onChange(info) {
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+    listType: 'picture',
+    multiple: true,
   };
 
   useEffect(() => {
@@ -180,7 +183,7 @@ const Edit: React.FC<EditProps> = (props) => {
               name="articleCoverImage"
               rules={[{ required: true, message: '请上传文章封面!' }]}
             >
-              <Upload {...uploadProps}>
+              <Upload {...uploadProps} fileList={fileList}>
                 <Button>
                   <UploadOutlined /> 点击上传
                 </Button>

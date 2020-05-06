@@ -1,5 +1,5 @@
 /**
- * @description Response
+ * @description Response Result
  * @author ShiLin
  * @date 2020/5/6 9:23 下午
  */
