@@ -47,6 +47,8 @@ const tailLayout = {
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
+const uploadUrl = '/api/upload/file';
+
 const Edit: React.FC<EditProps> = (props) => {
   // @ts-ignore
   const {
@@ -68,6 +70,7 @@ const Edit: React.FC<EditProps> = (props) => {
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onFinish = (values) => {
+    console.log(values);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     updateArticle(values).then((res) => {});
   };
@@ -115,7 +118,7 @@ const Edit: React.FC<EditProps> = (props) => {
 
   // @ts-ignore
   const uploadProps: UploadProps = {
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    action: uploadUrl,
     onChange: (info) => {
       // eslint-disable-next-line no-shadow
       let fileList = [...info.fileList];
