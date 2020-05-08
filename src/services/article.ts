@@ -1,7 +1,6 @@
 import request from 'umi-request';
 import { TableListParams } from '@/pages/article/list/data';
 import { Result } from '@/interface/result';
-import { Article } from '@/interface/article';
 import { ArticleRelevant } from '@/interface/article_relevant';
 import { PaginationParams } from '@/interface/pagination_params';
 
@@ -21,7 +20,15 @@ export async function getAllCategories(params?: PaginationParams) {
   });
 }
 
-export async function updateArticle(params: Article) {
+export async function updateArticle(params: {
+  articleTitle: string;
+  enableComment: boolean;
+  articleStatus: boolean;
+  articleCoverImage: string;
+  articleCategoryId: string;
+  articleTags: string;
+  articleContentText: string;
+}) {
   return request('/api/article/update', {
     method: 'POST',
     data: params,

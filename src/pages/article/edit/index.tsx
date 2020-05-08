@@ -3,7 +3,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Input, Button, Select, Spin, Upload } from 'antd';
+import { Form, Input, Button, Select, Spin, Upload, Switch } from 'antd';
 import { queryArticle, getAllCategories, updateArticle } from '@/services/article';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interface/category';
@@ -29,6 +29,18 @@ interface Location {
 
 interface EditProps {
   location: Location;
+}
+
+interface UploadParam {
+  articleId: string;
+  articleCategoryId: string;
+  articleContentText: string;
+  articleCoverImage: string;
+  articleStatus: boolean;
+  articleTags: string;
+  articleTitle: string;
+  categories: string;
+  enableComment: boolean;
 }
 
 const tailLayout = {
@@ -58,6 +70,8 @@ const Edit: React.FC<EditProps> = (props) => {
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [fileList, setFileList] = useState([]);
+  const [articleStatusSwitch, setArticleStatusSwitch] = useState(true);
+  const [enableCommentSwitch, setEnableCommentSwitch] = useState(true);
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -72,7 +86,26 @@ const Edit: React.FC<EditProps> = (props) => {
   const onFinish = (values) => {
     console.log(values);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateArticle(values).then((res) => {});
+    const {
+      articleTitle,
+      articleCategoryId,
+      articleTags: articleTagsC,
+      articleContentText,
+      articleCoverImage,
+      articleStatus,
+      enableComment,
+    }: UploadParam = values;
+    updateArticle({
+      articleTitle,
+      articleCategoryId,
+      articleTags: articleTagsC,
+      articleContentText,
+      articleCoverImage,
+      articleStatus,
+      enableComment,
+    }).then((res) => {
+      console.log(res);
+    });
   };
 
   // @ts-ignore
@@ -191,6 +224,30 @@ const Edit: React.FC<EditProps> = (props) => {
                   <UploadOutlined /> 点击上传
                 </Button>
               </Upload>
+            </Form.Item>
+            <Form.Item
+              label="状态"
+              name="articleStatus"
+              rules={[{ required: true, message: '请选择文章状态!' }]}
+            >
+              <Switch
+                checked={articleStatusSwitch}
+                onChange={(state) => setArticleStatusSwitch(state)}
+                checkedChildren="发布"
+                unCheckedChildren="草稿"
+              />
+            </Form.Item>
+            <Form.Item
+              label="评论"
+              name="enableComment"
+              rules={[{ required: true, message: '请选择评论开启状态!' }]}
+            >
+              <Switch
+                checked={enableCommentSwitch}
+                onChange={(state) => setEnableCommentSwitch(state)}
+                checkedChildren="开启"
+                unCheckedChildren="关闭"
+              />
             </Form.Item>
             <Form.Item
               name="articleContentText"
