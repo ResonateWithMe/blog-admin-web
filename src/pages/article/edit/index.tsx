@@ -4,18 +4,16 @@ import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Form, Input, Button, Select, Spin, Upload, Switch } from 'antd';
-import { queryArticle, getAllCategories, updateArticle } from '@/services/article';
+import { queryArticle, updateArticle } from '@/services/article';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interface/category';
 import { Article } from '@/interface/article';
-import { Result } from '@/interface/result';
-import { ArticleRelevant } from '@/interface/article_relevant';
+import { UploadChangeParam, UploadProps } from 'antd/es/upload/interface';
 import styles from './index.less';
 import EditableTagGroup from '../components/EditableTagGroup';
-import { UploadProps } from 'antd/es/upload/interface';
 
 interface Query {
-  id: number;
+  id: string;
 }
 
 interface Location {
@@ -34,8 +32,8 @@ interface EditProps {
 interface UploadParam {
   articleId: string;
   articleCategoryId: string;
-  articleContentText: string;
-  articleCoverImage: string;
+  articleContent: string;
+  articleCoverImage: UploadChangeParam;
   articleStatus: boolean;
   articleTags: string;
   articleTitle: string;
@@ -62,10 +60,7 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const uploadUrl = '/api/upload/file';
 
 const Edit: React.FC<EditProps> = (props) => {
-  // @ts-ignore
-  const {
-    location: { query },
-  } = props;
+  const { location } = props;
   const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
@@ -75,10 +70,9 @@ const Edit: React.FC<EditProps> = (props) => {
   const [form] = Form.useForm();
 
   // @ts-ignore
-  const handleEditorChange = ({ html, text }) => {
+  const handleEditorChange = ({ text }) => {
     form.setFieldsValue({
-      articleContent: html,
-      articleContentText: text,
+      articleContent: text,
     });
   };
   // @ts-ignore
@@ -89,18 +83,19 @@ const Edit: React.FC<EditProps> = (props) => {
     const {
       articleTitle,
       articleCategoryId,
-      articleTags: articleTagsC,
-      articleContentText,
+      articleTags: articleTags2,
+      articleContent,
       articleCoverImage,
       articleStatus,
       enableComment,
     }: UploadParam = values;
     updateArticle({
+      articleId: location.query.id,
       articleTitle,
       articleCategoryId,
-      articleTags: articleTagsC,
-      articleContentText,
-      articleCoverImage,
+      articleTags: articleTags2.toString(),
+      articleContent,
+      articleCoverImage: articleCoverImage.file.response.data,
       articleStatus,
       enableComment,
     }).then((res) => {
@@ -114,36 +109,25 @@ const Edit: React.FC<EditProps> = (props) => {
     // console.log('Failed:', errorInfo);
   };
 
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleChange = (value) => {};
-
   const initArticleData = () => {
     setSpinning(true);
-    Promise.all([queryArticle(query.id), getAllCategories()])
-      .then((values) => {
-        const [articleResult, allCategoriesResult]: [
-          Result<ArticleRelevant>,
-          Result<Category[]>,
-        ] = values;
-        if (articleResult.resultCode !== 200 || allCategoriesResult.resultCode !== 200) {
+    queryArticle(location.query.id)
+      .then((res) => {
+        if (res.resultCode !== 200) {
           return;
         }
-        const articles = articleResult.data || {};
-        const articleData: Article = articles.article || {};
-        const currentCategoryData: Category[] = articles.categories || [];
-        setArticleTags(articleData.articleTags.split(','));
+        const result = res.data || {};
+        const article: Article = result.article || {};
+        const allCategories: Category[] = result.allCategories || [];
+        setArticleTags(article.articleTags.split(','));
         form.setFieldsValue({
-          articleTitle: articleData.articleTitle,
-          articleTags: articleData.articleTags.split(','),
-          categories: currentCategoryData.map((item) => item.categoryName),
-          articleContentText: articleData.articleContent,
+          articleTitle: article.articleTitle,
+          articleTags: article.articleTags.split(','),
+          articleCategoryId: article.articleCategoryId,
+          articleContent: article.articleContent,
         });
-        setCategoriesAll(allCategoriesResult.data || []);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        setCategoriesAll(allCategories || []);
       })
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .catch((e) => {})
       .finally(() => {
         setSpinning(false);
       });
@@ -189,18 +173,13 @@ const Edit: React.FC<EditProps> = (props) => {
             </Form.Item>
             <Form.Item
               label="分类"
-              name="categories"
+              name="articleCategoryId"
               rules={[{ required: true, message: '请选择文章分类!' }]}
             >
-              <Select
-                mode="multiple"
-                style={{ width: '100%' }}
-                placeholder="请选择文章分类"
-                onChange={handleChange}
-              >
+              <Select style={{ width: '100%' }} placeholder="请选择文章分类">
                 {categoriesAll.map((item) => {
                   return (
-                    <Select.Option value={item.categoryName} key={item.categoryId}>
+                    <Select.Option value={item.categoryId} key={item.categoryId}>
                       {item.categoryName}
                     </Select.Option>
                   );
@@ -250,7 +229,7 @@ const Edit: React.FC<EditProps> = (props) => {
               />
             </Form.Item>
             <Form.Item
-              name="articleContentText"
+              name="articleContent"
               rules={[{ required: true, message: '请输入文章内容!' }]}
             >
               <MdEditor

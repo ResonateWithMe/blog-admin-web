@@ -2,11 +2,11 @@ import { Article } from '@/interface/article';
 import { Category } from '@/interface/category';
 
 /**
- * @description articleRelevant
+ * @description ArticleDetail
  * @author ShiLin
  * @date 2020/5/6 10:01 下午
  */
-export interface ArticleRelevant {
+export interface ArticleDetail {
   article: Article;
-  categories: Category[];
+  allCategories: Category[];
 }

@@ -1,7 +1,7 @@
 import request from 'umi-request';
 import { TableListParams } from '@/pages/article/list/data';
 import { Result } from '@/interface/result';
-import { ArticleRelevant } from '@/interface/article_relevant';
+import { ArticleDetail } from '@/interface/article_detail';
 import { PaginationParams } from '@/interface/pagination_params';
 
 export async function queryArticleList(params?: TableListParams) {
@@ -10,7 +10,7 @@ export async function queryArticleList(params?: TableListParams) {
   });
 }
 
-export async function queryArticle(articleId: number): Promise<Result<ArticleRelevant>> {
+export async function queryArticle(articleId: string): Promise<Result<ArticleDetail>> {
   return request(`/api/article/detail/${articleId}`);
 }
 
@@ -24,10 +24,11 @@ export async function updateArticle(params: {
   articleTitle: string;
   enableComment: boolean;
   articleStatus: boolean;
-  articleCoverImage: string;
+  articleId: string;
+  articleCoverImage: any;
   articleCategoryId: string;
+  articleContent: string;
   articleTags: string;
-  articleContentText: string;
 }) {
   return request('/api/article/update', {
     method: 'POST',
