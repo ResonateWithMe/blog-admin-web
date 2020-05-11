@@ -3,12 +3,12 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Button, Select, Spin, Upload, Switch, Card, notification } from 'antd';
+import { Form, Button, Select, Spin, Upload, Card, notification, Radio, message } from 'antd';
 import { queryArticle, updateArticle } from '@/services/article';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interfaces/category';
 import { Article } from '@/interfaces/article';
-import { UploadChangeParam, UploadProps } from 'antd/es/upload/interface';
+import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
 import EditableTagGroup from '../components/EditableTagGroup';
 
@@ -27,18 +27,6 @@ interface Location {
 
 interface EditProps {
   location: Location;
-}
-
-interface UploadParam {
-  articleId: string;
-  articleCategoryId: string;
-  articleContent: string;
-  articleCoverImage: UploadChangeParam;
-  articleStatus: boolean;
-  articleTags: string;
-  articleTitle: string;
-  categories: string;
-  enableComment: boolean;
 }
 
 const tailLayout = {
@@ -69,7 +57,7 @@ const Edit: React.FC<EditProps> = (props) => {
   const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
-  const [fileList, setFileList] = useState([]);
+  const [coverImage, setCoverImage] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
@@ -81,37 +69,44 @@ const Edit: React.FC<EditProps> = (props) => {
   };
   // @ts-ignore
   const onFinish = (values) => {
-    const {
-      articleTitle,
-      articleCategoryId,
-      articleTags: articleTags2,
-      articleContent,
-      articleCoverImage,
-      articleStatus,
-      enableComment,
-    }: UploadParam = values;
-    setLoading(true);
-    updateArticle({
-      articleId: location.query.id,
-      articleTitle,
-      articleCategoryId,
-      articleTags: articleTags2.toString(),
-      articleContent,
-      articleCoverImage: articleCoverImage.file.response.data,
-      articleStatus,
-      enableComment,
-    })
-      .then((res) => {
-        if (res.resultCode === 200) {
-          notification.success({
-            message: `${res.message}`,
-            description: 'The article content is update success!',
-          });
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const {
+        articleTitle,
+        articleCategoryId,
+        articleTags: articleTags2,
+        articleContent,
+        articleCoverImage,
+        articleStatus,
+        enableComment,
+      }: Article = values;
+      setLoading(true);
+
+      const params = {
+        articleId: location.query.id,
+        articleTitle,
+        articleCategoryId,
+        articleTags: articleTags2.toString(),
+        articleContent,
+        articleCoverImage,
+        articleStatus,
+        enableComment,
+      };
+      updateArticle(params)
+        .then((res) => {
+          if (res.resultCode === 200) {
+            notification.success({
+              message: `${res.message}`,
+              description: 'The article content is update success!',
+            });
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (e) {
+      setLoading(false);
+      message.error('更新失败');
+    }
   };
 
   // @ts-ignore
@@ -138,7 +133,9 @@ const Edit: React.FC<EditProps> = (props) => {
           articleContent: article.articleContent,
           articleStatus: article.articleStatus,
           enableComment: article.enableComment,
+          articleCoverImage: article.articleCoverImage,
         });
+        setCoverImage(article.articleCoverImage);
         setCategoriesAll(allCategories || []);
       })
       .finally(() => {
@@ -160,9 +157,14 @@ const Edit: React.FC<EditProps> = (props) => {
         }
         return file;
       });
+      const url = fileList[0] ? fileList[0].url || '' : '';
+      form.setFieldsValue({
+        articleCoverImage: url,
+      });
+      setCoverImage(url);
 
       // @ts-ignore
-      setFileList(fileList);
+      // setFileList(fileList);
     },
     listType: 'picture',
     multiple: true,
@@ -220,27 +222,48 @@ const Edit: React.FC<EditProps> = (props) => {
             <Form.Item
               label="封面"
               name="articleCoverImage"
-              rules={[{ required: true, message: '请上传文章封面!' }]}
+              rules={[{ required: false, message: '请上传文章封面!' }]}
             >
-              <Upload {...uploadProps} fileList={fileList}>
-                <Button>
-                  <UploadOutlined /> 点击上传
-                </Button>
-              </Upload>
+              <>
+                {/* https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Beijing_skyline_from_northeast_4th_ring_road.jpg/800px-Beijing_skyline_from_northeast_4th_ring_road.jpg */}
+                <Card
+                  hoverable
+                  style={{ width: 400, marginBottom: '20px' }}
+                  cover={<img alt="封面" src={coverImage} />}
+                >
+                  <Card.Meta
+                    title={form.getFieldValue('articleTitle')}
+                    description={form.getFieldValue('articleCoverImage')}
+                  />
+                </Card>
+                <Upload {...uploadProps}>
+                  <Button>
+                    <UploadOutlined /> 点击上传
+                  </Button>
+                </Upload>
+              </>
             </Form.Item>
             <Form.Item
               label="状态"
               name="articleStatus"
               rules={[{ required: false, message: '请选择文章状态!' }]}
             >
-              <Switch checkedChildren="发布" unCheckedChildren="草稿" />
+              <Radio.Group name="articleStatus">
+                <Radio value>发布</Radio>
+                <Radio value={false}>草稿</Radio>
+              </Radio.Group>
+              {/* <Switch checkedChildren="发布" unCheckedChildren="草稿" /> */}
             </Form.Item>
             <Form.Item
               label="评论"
               name="enableComment"
               rules={[{ required: false, message: '请选择评论开启状态!' }]}
             >
-              <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+              <Radio.Group name="enableComment">
+                <Radio value>开启</Radio>
+                <Radio value={false}>关闭</Radio>
+              </Radio.Group>
+              {/* <Switch checkedChildren="开启" unCheckedChildren="关闭" /> */}
             </Form.Item>
             <Form.Item
               label="内容"
@@ -261,7 +284,7 @@ const Edit: React.FC<EditProps> = (props) => {
             </Form.Item>
             <Form.Item {...tailLayout}>
               <Button block type="primary" htmlType="submit" loading={loading}>
-                保存
+                更新文章
               </Button>
             </Form.Item>
           </Form>
