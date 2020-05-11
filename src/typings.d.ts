@@ -12,7 +12,7 @@ declare module '*.bmp';
 declare module '*.tiff';
 declare module 'omit.js';
 
-// google analytics interface
+// google analytics interfaces
 interface GAFieldsObject {
   eventCategory: string;
   eventAction: string;

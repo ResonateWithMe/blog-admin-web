@@ -1,5 +1,5 @@
-import { Article } from '@/interface/article';
-import { Category } from '@/interface/category';
+import { Article } from '@/interfaces/article';
+import { Category } from '@/interfaces/category';
 
 /**
  * @description ArticleDetail

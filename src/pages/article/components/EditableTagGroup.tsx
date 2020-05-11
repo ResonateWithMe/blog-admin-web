@@ -4,6 +4,7 @@
  * @date 2020/5/6 12:41
  */
 import { Tag, Tooltip } from 'antd';
+import { TweenOneGroup } from 'rc-tween-one';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import InputRef from './InputRef';
@@ -13,6 +14,24 @@ interface EditableTagGroupProps {
   tags: string[];
   setTags: (data: string[]) => void;
 }
+
+const colors = [
+  '#f50',
+  '#2db7f5',
+  '#87d068',
+  '#108ee9',
+  'magenta',
+  'red',
+  'volcano',
+  'orange',
+  'gold',
+  'lime',
+  'green',
+  'cyan',
+  'blue',
+  'geekblue',
+  'purple',
+];
 
 const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
   const { tags, setTags } = props;
@@ -66,32 +85,33 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
 
   return (
     <div>
-      {tags.map((tag, index) => {
-        if (editInputIndex === index) {
-          return (
-            <InputRef
+      <TweenOneGroup>
+        {tags.map((tag, index) => {
+          if (editInputIndex === index) {
+            return (
+              <InputRef
+                key={tag}
+                isFocus={editInputFocus}
+                value={editInputValue}
+                onChange={handleEditInputChange}
+                onBlur={handleEditInputConfirm}
+                onPressEnter={handleEditInputConfirm}
+              />
+            );
+          }
+
+          const isLongTag = tag.length > 20;
+
+          const tagElem = (
+            <Tag
+              color={colors[index]}
+              className="edit-tag"
               key={tag}
-              isFocus={editInputFocus}
-              value={editInputValue}
-              onChange={handleEditInputChange}
-              onBlur={handleEditInputConfirm}
-              onPressEnter={handleEditInputConfirm}
-            />
-          );
-        }
-
-        const isLongTag = tag.length > 20;
-
-        const tagElem = (
-          <Tag
-            className="edit-tag"
-            key={tag}
-            closable={index !== 0}
-            onClose={() => handleClose(tag)}
-          >
-            <span
-              onDoubleClick={(e) => {
-                if (index !== 0) {
+              closable
+              onClose={() => handleClose(tag)}
+            >
+              <span
+                onDoubleClick={(e) => {
                   setEditInputIndex(index);
                   setEditInputValue(tag);
                   // hack 引用，动态关联不生效
@@ -99,35 +119,36 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
                   // console.log(editInput)
                   // editInput.current.focus();
                   e.preventDefault();
-                }
-              }}
-            >
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-            </span>
+                }}
+              >
+                {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              </span>
+            </Tag>
+          );
+          return isLongTag ? (
+            <Tooltip title={tag} key={tag}>
+              {tagElem}
+            </Tooltip>
+          ) : (
+            tagElem
+          );
+        })}
+
+        {inputVisible && (
+          <InputRef
+            isFocus={inputFocus}
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleInputConfirm}
+            onPressEnter={handleInputConfirm}
+          />
+        )}
+        {!inputVisible && (
+          <Tag className="site-tag-plus" onClick={showInput}>
+            <PlusOutlined /> New Tag
           </Tag>
-        );
-        return isLongTag ? (
-          <Tooltip title={tag} key={tag}>
-            {tagElem}
-          </Tooltip>
-        ) : (
-          tagElem
-        );
-      })}
-      {inputVisible && (
-        <InputRef
-          isFocus={inputFocus}
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
-        />
-      )}
-      {!inputVisible && (
-        <Tag className="site-tag-plus" onClick={showInput}>
-          <PlusOutlined /> New Tag
-        </Tag>
-      )}
+        )}
+      </TweenOneGroup>
     </div>
   );
 };

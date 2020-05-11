@@ -1,9 +1,9 @@
 import request from 'umi-request';
 import { TableListParams } from '@/pages/article/list/data';
-import { Result } from '@/interface/result';
-import { ArticleDetail } from '@/interface/article_detail';
-import { PaginationParams } from '@/interface/pagination_params';
-import { Article } from '@/interface/article';
+import { Result } from '@/interfaces/result';
+import { ArticleDetail } from '@/interfaces/article_detail';
+import { PaginationParams } from '@/interfaces/pagination_params';
+import { Article } from '@/interfaces/article';
 
 export async function queryArticleList(params?: TableListParams) {
   return request('/api/article/list', {

@@ -3,15 +3,14 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Button, Select, Spin, Upload, Switch, message } from 'antd';
+import { Form, Button, Select, Spin, Upload, Switch, Card, notification } from 'antd';
 import { queryArticle, updateArticle } from '@/services/article';
 import { UploadOutlined } from '@ant-design/icons/lib';
-import { Category } from '@/interface/category';
-import { Article } from '@/interface/article';
+import { Category } from '@/interfaces/category';
+import { Article } from '@/interfaces/article';
 import { UploadChangeParam, UploadProps } from 'antd/es/upload/interface';
-import styles from './index.less';
-import EditableTagGroup from '../components/EditableTagGroup';
 import TextArea from 'antd/es/input/TextArea';
+import EditableTagGroup from '../components/EditableTagGroup';
 
 interface Query {
   id: string;
@@ -45,8 +44,8 @@ interface UploadParam {
 const tailLayout = {
   wrapperCol: {
     lg: {
-      offset: 8,
-      span: 5,
+      offset: 2,
+      span: 4,
     },
     xs: {
       offset: 0,
@@ -71,6 +70,7 @@ const Edit: React.FC<EditProps> = (props) => {
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [fileList, setFileList] = useState([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -90,6 +90,7 @@ const Edit: React.FC<EditProps> = (props) => {
       articleStatus,
       enableComment,
     }: UploadParam = values;
+    setLoading(true);
     updateArticle({
       articleId: location.query.id,
       articleTitle,
@@ -99,11 +100,18 @@ const Edit: React.FC<EditProps> = (props) => {
       articleCoverImage: articleCoverImage.file.response.data,
       articleStatus,
       enableComment,
-    }).then((res) => {
-      if (res.resultCode === 200) {
-        message.success(`${res.message}`);
-      }
-    });
+    })
+      .then((res) => {
+        if (res.resultCode === 200) {
+          notification.success({
+            message: `${res.message}`,
+            description: 'The article content is update success!',
+          });
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   // @ts-ignore
@@ -165,8 +173,8 @@ const Edit: React.FC<EditProps> = (props) => {
   }, []);
 
   return (
-    <PageHeaderWrapper>
-      <div className={styles.edit}>
+    <PageHeaderWrapper title="文章编辑">
+      <Card>
         <Spin tip="Loading..." spinning={spinning}>
           <Form
             {...formItemLayout}
@@ -244,19 +252,21 @@ const Edit: React.FC<EditProps> = (props) => {
               rules={[{ required: true, message: '请输入文章内容!' }]}
             >
               <MdEditor
+                placeholder="请输入文章内容"
+                config={{ view: { menu: true, md: true, html: false } }}
                 style={{ height: '500px' }}
                 renderHTML={(text) => mdParser.render(text)}
                 onChange={handleEditorChange}
               />
             </Form.Item>
             <Form.Item {...tailLayout}>
-              <Button block type="primary" htmlType="submit">
+              <Button block type="primary" htmlType="submit" loading={loading}>
                 保存
               </Button>
             </Form.Item>
           </Form>
         </Spin>
-      </div>
+      </Card>
     </PageHeaderWrapper>
   );
 };
