@@ -3,6 +3,7 @@ import { TableListParams } from '@/pages/article/list/data';
 import { Result } from '@/interface/result';
 import { ArticleDetail } from '@/interface/article_detail';
 import { PaginationParams } from '@/interface/pagination_params';
+import { Article } from '@/interface/article';
 
 export async function queryArticleList(params?: TableListParams) {
   return request('/api/article/list', {
@@ -20,16 +21,7 @@ export async function getAllCategories(params?: PaginationParams) {
   });
 }
 
-export async function updateArticle(params: {
-  articleTitle: string;
-  enableComment: boolean;
-  articleStatus: boolean;
-  articleId: string;
-  articleCoverImage: any;
-  articleCategoryId: string;
-  articleContent: string;
-  articleTags: string;
-}) {
+export async function updateArticle(params: Article): Promise<Result<any>> {
   return request('/api/article/update', {
     method: 'POST',
     data: params,

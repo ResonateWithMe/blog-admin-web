@@ -3,7 +3,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Input, Button, Select, Spin, Upload, Switch } from 'antd';
+import { Form, Button, Select, Spin, Upload, Switch, message } from 'antd';
 import { queryArticle, updateArticle } from '@/services/article';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interface/category';
@@ -11,6 +11,7 @@ import { Article } from '@/interface/article';
 import { UploadChangeParam, UploadProps } from 'antd/es/upload/interface';
 import styles from './index.less';
 import EditableTagGroup from '../components/EditableTagGroup';
+import TextArea from 'antd/es/input/TextArea';
 
 interface Query {
   id: string;
@@ -44,14 +45,19 @@ interface UploadParam {
 const tailLayout = {
   wrapperCol: {
     lg: {
-      offset: 10,
-      span: 4,
+      offset: 8,
+      span: 5,
     },
     xs: {
       offset: 0,
       span: 24,
     },
   },
+};
+
+const formItemLayout = {
+  labelCol: { span: 2 },
+  wrapperCol: { span: 17 },
 };
 
 // 初始化Markdown解析器
@@ -65,8 +71,6 @@ const Edit: React.FC<EditProps> = (props) => {
   const [spinning, setSpinning] = useState<boolean>(false);
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [fileList, setFileList] = useState([]);
-  const [articleStatusSwitch, setArticleStatusSwitch] = useState(true);
-  const [enableCommentSwitch, setEnableCommentSwitch] = useState(true);
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -76,10 +80,7 @@ const Edit: React.FC<EditProps> = (props) => {
     });
   };
   // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onFinish = (values) => {
-    console.log(values);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
       articleTitle,
       articleCategoryId,
@@ -99,7 +100,9 @@ const Edit: React.FC<EditProps> = (props) => {
       articleStatus,
       enableComment,
     }).then((res) => {
-      console.log(res);
+      if (res.resultCode === 200) {
+        message.success(`${res.message}`);
+      }
     });
   };
 
@@ -125,6 +128,8 @@ const Edit: React.FC<EditProps> = (props) => {
           articleTags: article.articleTags.split(','),
           articleCategoryId: article.articleCategoryId,
           articleContent: article.articleContent,
+          articleStatus: article.articleStatus,
+          enableComment: article.enableComment,
         });
         setCategoriesAll(allCategories || []);
       })
@@ -143,7 +148,7 @@ const Edit: React.FC<EditProps> = (props) => {
       fileList = fileList.map((file) => {
         if (file.response) {
           // eslint-disable-next-line no-param-reassign
-          file.url = file.response.url;
+          file.url = file.response.data;
         }
         return file;
       });
@@ -163,16 +168,27 @@ const Edit: React.FC<EditProps> = (props) => {
     <PageHeaderWrapper>
       <div className={styles.edit}>
         <Spin tip="Loading..." spinning={spinning}>
-          <Form form={form} name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+          <Form
+            {...formItemLayout}
+            form={form}
+            name="basic"
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+          >
             <Form.Item
               label="标题"
               name="articleTitle"
               rules={[{ required: true, message: '请输入文章标题!' }]}
             >
-              <Input placeholder="请输入文章标题" />
+              <TextArea placeholder="请输入文章标题" autoSize={{ minRows: 1, maxRows: 6 }} />
+              {/* <Input placeholder="请输入文章标题" /> */}
             </Form.Item>
             <Form.Item
               label="分类"
+              {...{
+                labelCol: { span: 2 },
+                wrapperCol: { span: 6 },
+              }}
               name="articleCategoryId"
               rules={[{ required: true, message: '请选择文章分类!' }]}
             >
@@ -207,33 +223,27 @@ const Edit: React.FC<EditProps> = (props) => {
             <Form.Item
               label="状态"
               name="articleStatus"
-              rules={[{ required: true, message: '请选择文章状态!' }]}
+              rules={[{ required: false, message: '请选择文章状态!' }]}
             >
-              <Switch
-                checked={articleStatusSwitch}
-                onChange={(state) => setArticleStatusSwitch(state)}
-                checkedChildren="发布"
-                unCheckedChildren="草稿"
-              />
+              <Switch checkedChildren="发布" unCheckedChildren="草稿" />
             </Form.Item>
             <Form.Item
               label="评论"
               name="enableComment"
-              rules={[{ required: true, message: '请选择评论开启状态!' }]}
+              rules={[{ required: false, message: '请选择评论开启状态!' }]}
             >
-              <Switch
-                checked={enableCommentSwitch}
-                onChange={(state) => setEnableCommentSwitch(state)}
-                checkedChildren="开启"
-                unCheckedChildren="关闭"
-              />
+              <Switch checkedChildren="开启" unCheckedChildren="关闭" />
             </Form.Item>
             <Form.Item
+              label="内容"
+              {...{
+                labelCol: { span: 2 },
+                wrapperCol: { span: 20 },
+              }}
               name="articleContent"
               rules={[{ required: true, message: '请输入文章内容!' }]}
             >
               <MdEditor
-                value=""
                 style={{ height: '500px' }}
                 renderHTML={(text) => mdParser.render(text)}
                 onChange={handleEditorChange}
