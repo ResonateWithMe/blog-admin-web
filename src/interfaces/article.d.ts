@@ -9,13 +9,13 @@ export interface Article {
   articleContent: string;
   articleCoverImage: string;
   articleId: number | string;
-  articleStatus: boolean;
+  articleStatus: number;
   articleSubUrl?: string;
   articleTags: string;
   articleTitle: string;
   articleViews?: number;
   createTime?: string;
-  enableComment: boolean;
+  enableComment: number;
   isDeleted?: number;
   key?: number;
   updateTime?: Date;
