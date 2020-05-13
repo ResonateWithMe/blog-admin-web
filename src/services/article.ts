@@ -28,6 +28,13 @@ export async function updateArticle(params: Article): Promise<Result<any>> {
   });
 }
 
+export async function findCategoryList(): Promise<Result<any>> {
+  return request('/api/categories/list', {
+    method: 'POST',
+  });
+}
+
+// -----------------------
 export async function removeRule(params: { key: number[] }) {
   return request('/api/rule', {
     method: 'POST',

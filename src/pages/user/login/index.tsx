@@ -45,7 +45,7 @@ const Login: React.FC<LoginProps> = (props) => {
     });
   };
 
-  const getImg = () => {
+  const getVerificationImg = () => {
     setLoadingBlob(true);
     getVerifyCode().then((res) => {
       setLoadingBlob(false);
@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = (props) => {
   };
 
   useEffect(() => {
-    getImg();
+    getVerificationImg();
   }, []);
 
   return (
@@ -90,7 +90,7 @@ const Login: React.FC<LoginProps> = (props) => {
             name="verifyCode"
             placeholder="验证码"
             blobUrl={blobUrl}
-            imgClick={getImg}
+            imgClick={getVerificationImg}
             loadingBlob={loadingBlob}
             rules={[
               {

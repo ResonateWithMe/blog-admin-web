@@ -1,38 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Row, Col, Input, Button } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
+// import {Category} from "@/interfaces/category";
 import styles from './styles/AdvancedSearchForm.less';
 
 const AdvancedSearchForm = () => {
   const [expand, setExpand] = useState(false);
+  // const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [form] = Form.useForm();
-
-  const getFields = () => {
-    const count = expand ? 10 : 6;
-    const children = [];
-
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < count; i++) {
-      children.push(
-        <Col span={8} key={i}>
-          <Form.Item
-            name={`field-${i}`}
-            label={`Field ${i}`}
-            rules={[
-              {
-                required: true,
-                message: 'Input something!',
-              },
-            ]}
-          >
-            <Input placeholder="placeholder" />
-          </Form.Item>
-        </Col>,
-      );
-    }
-
-    return children;
-  };
 
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -45,7 +20,39 @@ const AdvancedSearchForm = () => {
       className={styles.ant_advanced_search_form}
       onFinish={onFinish}
     >
-      <Row gutter={24}>{getFields()}</Row>
+      <Row gutter={24}>
+        <Col span={8}>
+          <Form.Item
+            label="标题"
+            name="articleTitle"
+            rules={[{ required: true, message: 'Input something!' }]}
+          >
+            <Input placeholder="请输入文章标题" />
+          </Form.Item>
+        </Col>
+        {/* <Col span={8}>
+          <Form.Item
+            label="分类"
+            {...{
+              labelCol: { span: 2 },
+              wrapperCol: { span: 6 },
+            }}
+            name="articleCategoryId"
+            rules={[{ required: true, message: '请选择文章分类!' }]}
+          >
+            <Select style={{ width: '100%' }} placeholder="请选择文章分类">
+              {categoriesAll.map((item) => {
+                return (
+                  <Select.Option value={item.categoryId} key={item.categoryId}>
+                    {item.categoryName}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+        </Col> */}
+      </Row>
+
       <Row>
         <Col
           span={24}

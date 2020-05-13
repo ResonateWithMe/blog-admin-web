@@ -1,3 +1,9 @@
+/**
+ * @description article
+ * @author ShiLin
+ * @date 2020/5/13 18:07
+ */
+
 import { stringify } from 'querystring';
 import { history, Reducer, Effect } from 'umi';
 

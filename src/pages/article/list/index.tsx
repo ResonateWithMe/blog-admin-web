@@ -77,7 +77,6 @@ const TableList: React.FC<{}> = () => {
   /**
    * 行选择
    * @param selectedRowKeys
-   * @param setSelectedRowKeys
    */
   // eslint-disable-next-line no-shadow
   const onSelectChange = (selectedRowKeys: React.SetStateAction<string[]>) => {
