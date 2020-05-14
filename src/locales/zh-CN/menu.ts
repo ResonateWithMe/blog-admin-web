@@ -52,6 +52,7 @@ export default {
   // ---------- New Add Start. ----------
   'menu.article': '文章管理',
   'menu.article.list': '文章列表',
-  'menu.article.edit': '文章编辑',
+  'menu.article.edit': '编辑文章',
+  'menu.article.create': '新建文章',
   // ---------- New Add End. ----------
 };

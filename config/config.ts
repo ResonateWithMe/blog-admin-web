@@ -78,16 +78,20 @@ export default defineConfig({
               routes: [
                 {
                   name: 'list',
-                  icon: 'smile',
                   path: '/article/list',
                   component: './article/list',
                 },
                 {
                   name: 'edit',
-                  icon: 'smile',
                   path: '/article/edit',
                   hideInMenu: true,
                   component: './article/edit',
+                },
+                {
+                  name: 'create',
+                  path: '/article/create',
+                  hideInMenu: true,
+                  component: './article/create',
                 },
                 {
                   component: './404',
