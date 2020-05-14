@@ -6,12 +6,12 @@ import 'react-markdown-editor-lite/lib/index.css';
 import { Form, Button, Select, Spin, Upload, Card, Radio, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interfaces/category';
-import { Article } from '@/interfaces/article';
 import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
 import { connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { Dispatch } from '@@/plugin-dva/connect';
+import { Article } from '@/interfaces/article';
 import EditableTagGroup from '../components/EditableTagGroup';
 
 interface Query {
@@ -30,7 +30,7 @@ interface Location {
 interface EditProps {
   location: Location;
   articleDetail: Article | undefined;
-  allCategories: Category[];
+  allCategories: Category[] | undefined;
   dispatch: Dispatch;
   loading?: boolean;
   updating?: boolean;
@@ -170,13 +170,14 @@ const Edit: React.FC<EditProps> = (props) => {
               rules={[{ required: true, message: '请选择文章分类!' }]}
             >
               <Select style={{ width: '100%' }} placeholder="请选择文章分类">
-                {allCategories.map((item) => {
-                  return (
-                    <Select.Option value={item.categoryId} key={item.categoryId}>
-                      {item.categoryName}
-                    </Select.Option>
-                  );
-                })}
+                {typeof allCategories !== 'undefined' &&
+                  allCategories.map((item) => {
+                    return (
+                      <Select.Option value={item.categoryId} key={item.categoryId}>
+                        {item.categoryName}
+                      </Select.Option>
+                    );
+                  })}
               </Select>
             </Form.Item>
             <Form.Item
@@ -261,8 +262,8 @@ const Edit: React.FC<EditProps> = (props) => {
 };
 
 export default connect(({ article, loading }: ConnectState) => ({
-  articleDetail: article.articleDetail,
-  allCategories: article.allCategories || [],
+  articleDetail: article.articleDetail?.article,
+  allCategories: article.articleDetail?.allCategories,
   loading: loading.effects['article/fetchArticleDetail'],
   updating: loading.effects['article/updateArticle'],
 }))(Edit);

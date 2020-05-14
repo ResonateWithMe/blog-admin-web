@@ -6,13 +6,19 @@
 
 import { Reducer, Effect } from 'umi';
 import { Article } from '@/interfaces/article';
-import { queryArticleList, queryArticleDetail, updateArticle } from '@/services/article';
+import {
+  queryArticleList,
+  queryArticleDetail,
+  updateArticle,
+  queryAllCategories,
+} from '@/services/article';
 import { Category } from '@/interfaces/category';
 import { message, notification } from 'antd';
+import { ArticleDetail } from '@/interfaces/article_detail';
 
 export interface ArticleStateType {
   articleList?: Article[];
-  articleDetail?: Article;
+  articleDetail?: ArticleDetail;
   detailSpinning?: boolean;
   allCategories?: Category[];
 }
@@ -23,11 +29,13 @@ export interface ArticleModelType {
   effects: {
     fetchAllArticle: Effect;
     fetchArticleDetail: Effect;
+    fetchAllCategories: Effect;
     updateArticle: Effect;
   };
   reducers: {
     saveAllArticle: Reducer<ArticleStateType>;
     saveArticleDetail: Reducer<ArticleStateType>;
+    saveAllCategories: Reducer<ArticleStateType>;
   };
 }
 
@@ -44,7 +52,6 @@ const ArticleModel: ArticleModelType = {
   effects: {
     *fetchAllArticle({ payload }, { call, put }) {
       const response = yield call(queryArticleList, payload);
-      if (response.resultCode !== 200) return;
       yield put({
         type: 'saveAllArticle',
         payload: response.data ? response.data.list : [],
@@ -52,9 +59,15 @@ const ArticleModel: ArticleModelType = {
     },
     *fetchArticleDetail({ payload }, { call, put }) {
       const response = yield call(queryArticleDetail, payload);
-      if (response.resultCode !== 200) return;
       yield put({
         type: 'saveArticleDetail',
+        payload: response.data,
+      });
+    },
+    *fetchAllCategories({ payload }, { call, put }) {
+      const response = yield call(queryAllCategories, payload);
+      yield put({
+        type: 'saveAllCategories',
         payload: response.data,
       });
     },
@@ -81,8 +94,13 @@ const ArticleModel: ArticleModelType = {
     saveArticleDetail(state, { payload }) {
       return {
         ...state,
-        articleDetail: payload.article,
-        allCategories: payload.allCategories,
+        articleDetail: payload,
+      };
+    },
+    saveAllCategories(state, { payload }) {
+      return {
+        ...state,
+        allCategories: payload,
       };
     },
   },

@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
-import { Form, Row, Col, Input, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Form, Row, Col, Input, Button, Select } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 // import {Category} from "@/interfaces/category";
+import { connect } from '@@/plugin-dva/exports';
+import { ConnectState } from '@/models/connect';
+import { Category } from '@/interfaces/category';
+import { Dispatch } from '@@/plugin-dva/connect';
 import styles from './styles/AdvancedSearchForm.less';
 
-const AdvancedSearchForm = () => {
+interface FormProps {
+  allCategories: Category[];
+  dispatch: Dispatch;
+}
+
+const AdvancedSearchForm: React.FC<FormProps> = (props) => {
+  const { allCategories, dispatch } = props;
   const [expand, setExpand] = useState(false);
   // const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [form] = Form.useForm();
@@ -12,6 +22,12 @@ const AdvancedSearchForm = () => {
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onFinish = (values) => {};
+
+  useEffect(() => {
+    dispatch({
+      type: 'article/fetchAllCategories',
+    });
+  }, []);
 
   return (
     <Form
@@ -30,18 +46,14 @@ const AdvancedSearchForm = () => {
             <Input placeholder="请输入文章标题" />
           </Form.Item>
         </Col>
-        {/* <Col span={8}>
+        <Col span={8}>
           <Form.Item
             label="分类"
-            {...{
-              labelCol: { span: 2 },
-              wrapperCol: { span: 6 },
-            }}
             name="articleCategoryId"
             rules={[{ required: true, message: '请选择文章分类!' }]}
           >
             <Select style={{ width: '100%' }} placeholder="请选择文章分类">
-              {categoriesAll.map((item) => {
+              {allCategories.map((item) => {
                 return (
                   <Select.Option value={item.categoryId} key={item.categoryId}>
                     {item.categoryName}
@@ -50,7 +62,7 @@ const AdvancedSearchForm = () => {
               })}
             </Select>
           </Form.Item>
-        </Col> */}
+        </Col>
       </Row>
 
       <Row>
@@ -89,4 +101,6 @@ const AdvancedSearchForm = () => {
   );
 };
 
-export default AdvancedSearchForm;
+export default connect(({ article }: ConnectState) => ({
+  allCategories: article.allCategories || [],
+}))(AdvancedSearchForm);

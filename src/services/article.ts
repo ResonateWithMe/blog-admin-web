@@ -15,7 +15,7 @@ export async function queryArticleDetail(articleId: string): Promise<Result<Arti
   return request(`/api/article/detail/${articleId}`);
 }
 
-export async function getAllCategories(params?: PaginationParams) {
+export async function queryAllCategories(params?: PaginationParams) {
   return request('/api/categories/list', {
     params,
   });
