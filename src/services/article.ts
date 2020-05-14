@@ -11,7 +11,7 @@ export async function queryArticleList(params?: TableListParams) {
   });
 }
 
-export async function queryArticle(articleId: string): Promise<Result<ArticleDetail>> {
+export async function queryArticleDetail(articleId: string): Promise<Result<ArticleDetail>> {
   return request(`/api/article/detail/${articleId}`);
 }
 

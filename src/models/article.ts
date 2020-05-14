@@ -4,93 +4,88 @@
  * @date 2020/5/13 18:07
  */
 
-import { stringify } from 'querystring';
-import { history, Reducer, Effect } from 'umi';
+import { Reducer, Effect } from 'umi';
+import { Article } from '@/interfaces/article';
+import { queryArticleList, queryArticleDetail, updateArticle } from '@/services/article';
+import { Category } from '@/interfaces/category';
+import { message, notification } from 'antd';
 
-import { fakeAccountLogin } from '@/services/login';
-import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
-import { message } from 'antd';
-
-export interface StateType {
-  status?: 'ok' | 'error';
-  type?: string;
-  currentAuthority?: 'user' | 'guest' | 'admin';
+export interface ArticleStateType {
+  articleList?: Article[];
+  articleDetail?: Article;
+  detailSpinning?: boolean;
+  allCategories?: Category[];
 }
 
-export interface LoginModelType {
-  namespace: string;
-  state: StateType;
+export interface ArticleModelType {
+  namespace: 'article';
+  state: ArticleStateType;
   effects: {
-    login: Effect;
-    logout: Effect;
+    fetchAllArticle: Effect;
+    fetchArticleDetail: Effect;
+    updateArticle: Effect;
   };
   reducers: {
-    changeLoginStatus: Reducer<StateType>;
+    saveAllArticle: Reducer<ArticleStateType>;
+    saveArticleDetail: Reducer<ArticleStateType>;
   };
 }
 
-const Model: LoginModelType = {
-  namespace: 'login',
+const ArticleModel: ArticleModelType = {
+  namespace: 'article',
 
   state: {
-    status: undefined,
+    articleList: [],
+    articleDetail: undefined,
+    detailSpinning: false,
+    allCategories: [],
   },
 
   effects: {
-    *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+    *fetchAllArticle({ payload }, { call, put }) {
+      const response = yield call(queryArticleList, payload);
+      if (response.resultCode !== 200) return;
       yield put({
-        type: 'changeLoginStatus',
-        payload: response,
+        type: 'saveAllArticle',
+        payload: response.data ? response.data.list : [],
       });
+    },
+    *fetchArticleDetail({ payload }, { call, put }) {
+      const response = yield call(queryArticleDetail, payload);
+      if (response.resultCode !== 200) return;
+      yield put({
+        type: 'saveArticleDetail',
+        payload: response.data,
+      });
+    },
+    *updateArticle({ payload }, { call }) {
+      const response = yield call(updateArticle, payload);
       if (response.resultCode !== 200) {
-        message.error(`${response.message}`);
+        message.error('更新失败');
         return;
       }
-      // Login successfully
-      const urlParams = new URL(window.location.href);
-      const params = getPageQuery();
-      let { redirect } = params as { redirect: string };
-      if (redirect) {
-        const redirectUrlParams = new URL(redirect);
-        if (redirectUrlParams.origin === urlParams.origin) {
-          redirect = redirect.substr(urlParams.origin.length);
-          if (redirect.match(/^\/.*#/)) {
-            redirect = redirect.substr(redirect.indexOf('#') + 1);
-          }
-        } else {
-          window.location.href = '/';
-          return;
-        }
-      }
-      history.replace(redirect || '/');
-    },
-
-    logout() {
-      const { redirect } = getPageQuery();
-      // Note: There may be security issues, please note
-      if (window.location.pathname !== '/user/login' && !redirect) {
-        history.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
-        });
-      }
+      notification.success({
+        message: `${response.message}`,
+        description: 'The article content is update success!',
+      });
     },
   },
 
   reducers: {
-    changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+    saveAllArticle(state, { payload }) {
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
+        articleList: payload,
+      };
+    },
+    saveArticleDetail(state, { payload }) {
+      return {
+        ...state,
+        articleDetail: payload.article,
+        allCategories: payload.allCategories,
       };
     },
   },
 };
 
-export default Model;
+export default ArticleModel;

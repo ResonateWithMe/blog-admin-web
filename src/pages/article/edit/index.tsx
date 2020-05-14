@@ -3,13 +3,15 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Button, Select, Spin, Upload, Card, notification, Radio, message } from 'antd';
-import { queryArticle, updateArticle } from '@/services/article';
+import { Form, Button, Select, Spin, Upload, Card, Radio, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interfaces/category';
 import { Article } from '@/interfaces/article';
 import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
+import { connect } from 'umi';
+import { ConnectState } from '@/models/connect';
+import { Dispatch } from '@@/plugin-dva/connect';
 import EditableTagGroup from '../components/EditableTagGroup';
 
 interface Query {
@@ -27,6 +29,11 @@ interface Location {
 
 interface EditProps {
   location: Location;
+  articleDetail: Article | undefined;
+  allCategories: Category[];
+  dispatch: Dispatch;
+  loading?: boolean;
+  updating?: boolean;
 }
 
 const tailLayout = {
@@ -53,12 +60,9 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const uploadUrl = '/api/upload/file';
 
 const Edit: React.FC<EditProps> = (props) => {
-  const { location } = props;
-  const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
-  const [spinning, setSpinning] = useState<boolean>(false);
+  const { location, articleDetail, allCategories, dispatch, loading, updating } = props;
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState('');
-  const [loading, setLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
   // @ts-ignore
@@ -68,43 +72,17 @@ const Edit: React.FC<EditProps> = (props) => {
     });
   };
   // @ts-ignore
-  const onFinish = (values) => {
+  const onFinish = (values: Store) => {
     try {
-      const {
-        articleTitle,
-        articleCategoryId,
-        articleTags: articleTags2,
-        articleContent,
-        articleCoverImage,
-        articleStatus,
-        enableComment,
-      }: Article = values;
-      setLoading(true);
-
-      const params = {
-        articleId: location.query.id,
-        articleTitle,
-        articleCategoryId,
-        articleTags: articleTags2.toString(),
-        articleContent,
-        articleCoverImage,
-        articleStatus,
-        enableComment,
-      };
-      updateArticle(params)
-        .then((res) => {
-          if (res.resultCode === 200) {
-            notification.success({
-              message: `${res.message}`,
-              description: 'The article content is update success!',
-            });
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      dispatch({
+        type: 'article/updateArticle',
+        payload: {
+          ...values,
+          articleId: location.query.id,
+          articleTags: values.articleTags.toString(),
+        },
+      });
     } catch (e) {
-      setLoading(false);
       message.error('更新失败');
     }
   };
@@ -113,34 +91,6 @@ const Edit: React.FC<EditProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onFinishFailed = (errorInfo) => {
     // console.log('Failed:', errorInfo);
-  };
-
-  const initArticleData = () => {
-    setSpinning(true);
-    queryArticle(location.query.id)
-      .then((res) => {
-        if (res.resultCode !== 200) {
-          return;
-        }
-        const result = res.data || {};
-        const article: Article = result.article || {};
-        const allCategories: Category[] = result.allCategories || [];
-        setArticleTags(article.articleTags.split(','));
-        form.setFieldsValue({
-          articleTitle: article.articleTitle,
-          articleTags: article.articleTags.split(','),
-          articleCategoryId: article.articleCategoryId,
-          articleContent: article.articleContent,
-          articleStatus: article.articleStatus,
-          enableComment: article.enableComment,
-          articleCoverImage: article.articleCoverImage,
-        });
-        setCoverImage(article.articleCoverImage);
-        setCategoriesAll(allCategories || []);
-      })
-      .finally(() => {
-        setSpinning(false);
-      });
   };
 
   // @ts-ignore
@@ -171,13 +121,30 @@ const Edit: React.FC<EditProps> = (props) => {
   };
 
   useEffect(() => {
-    initArticleData();
+    dispatch({
+      type: 'article/fetchArticleDetail',
+      payload: location.query.id,
+    });
   }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      articleTitle: articleDetail?.articleTitle,
+      articleTags: articleDetail?.articleTags.split(','),
+      articleCategoryId: articleDetail?.articleCategoryId,
+      articleContent: articleDetail?.articleContent,
+      articleStatus: articleDetail?.articleStatus,
+      enableComment: articleDetail?.enableComment,
+      articleCoverImage: articleDetail?.articleCoverImage,
+    });
+    setCoverImage(articleDetail?.articleCoverImage || '');
+    setArticleTags(articleDetail?.articleTags.split(',') || []);
+  }, [articleDetail]);
 
   return (
     <PageHeaderWrapper title="文章编辑">
       <Card>
-        <Spin tip="Loading..." spinning={spinning}>
+        <Spin tip="Loading..." spinning={loading}>
           <Form
             {...formItemLayout}
             form={form}
@@ -203,7 +170,7 @@ const Edit: React.FC<EditProps> = (props) => {
               rules={[{ required: true, message: '请选择文章分类!' }]}
             >
               <Select style={{ width: '100%' }} placeholder="请选择文章分类">
-                {categoriesAll.map((item) => {
+                {allCategories.map((item) => {
                   return (
                     <Select.Option value={item.categoryId} key={item.categoryId}>
                       {item.categoryName}
@@ -282,7 +249,7 @@ const Edit: React.FC<EditProps> = (props) => {
               />
             </Form.Item>
             <Form.Item {...tailLayout}>
-              <Button block type="primary" htmlType="submit" loading={loading}>
+              <Button block type="primary" htmlType="submit" loading={updating}>
                 更新文章
               </Button>
             </Form.Item>
@@ -293,4 +260,9 @@ const Edit: React.FC<EditProps> = (props) => {
   );
 };
 
-export default Edit;
+export default connect(({ article, loading }: ConnectState) => ({
+  articleDetail: article.articleDetail,
+  allCategories: article.allCategories || [],
+  loading: loading.effects['article/fetchArticleDetail'],
+  updating: loading.effects['article/updateArticle'],
+}))(Edit);

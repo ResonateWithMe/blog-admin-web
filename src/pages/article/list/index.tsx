@@ -1,81 +1,28 @@
-import {
-  Button,
-  Divider,
-  message,
-  Space,
-  Table,
-  Card,
-  Descriptions,
-  Badge,
-  Typography,
-} from 'antd';
+import { Button, Divider, Space, Table, Card, Descriptions, Badge, Typography } from 'antd';
 import { history } from '@@/core/history';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { ActionType } from '@ant-design/pro-table';
-import { queryArticleList, updateRule, addRule } from '@/services/article';
 import { Article } from '@/interfaces/article';
-import CreateForm from '../components/CreateForm';
-import UpdateForm, { FormValueType } from '../components/UpdateForm';
+import { connect } from 'umi';
+import { ConnectState } from '@/models/connect';
+import { Dispatch } from '@@/plugin-dva/connect';
 import AdvancedSearchForm from '../components/AdvancedSearchForm';
 import styles from './index.less';
 
 const { Paragraph } = Typography;
 
-const TableList: React.FC<{}> = () => {
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-  const [stepFormValues, setStepFormValues] = useState({});
+interface ArticleListProps {
+  articleList: Article[];
+  dispatch: Dispatch;
+}
+
+const TableList: React.FC<ArticleListProps> = (props) => {
+  const { articleList, dispatch } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  const [tableDataSource, setTableDataSource] = useState([]);
-
-  const actionRef = useRef<ActionType>();
+  // const [isModalVisiable, SetModalVisiable] = useState<boolean>(false);
 
   /**
-   * 添加节点
-   * @param fields
-   */
-  const handleAdd = async (fields: FormValueType) => {
-    const hide = message.loading('正在添加');
-    try {
-      await addRule({
-        desc: fields.desc,
-      });
-      hide();
-      message.success('添加成功');
-      return true;
-    } catch (error) {
-      hide();
-      message.error('添加失败请重试！');
-      return false;
-    }
-  };
-
-  /**
-   * 更新节点
-   * @param fields
-   */
-  const handleUpdate = async (fields: FormValueType) => {
-    const hide = message.loading('正在配置');
-    try {
-      await updateRule({
-        name: fields.name,
-        desc: fields.desc,
-        key: fields.key,
-      });
-      hide();
-
-      message.success('配置成功');
-      return true;
-    } catch (error) {
-      hide();
-      message.error('配置失败请重试！');
-      return false;
-    }
-  };
-
-  /**
-   * 行选择
+   * 行选
    * @param selectedRowKeys
    */
   // eslint-disable-next-line no-shadow
@@ -94,22 +41,6 @@ const TableList: React.FC<{}> = () => {
       query: {
         id: articleId,
       },
-    });
-  };
-
-  /**
-   * 获取文章数据
-   * @constructor
-   */
-  const getTableDataSource = () => {
-    queryArticleList({
-      currentPage: 1,
-      pageSize: 10,
-    }).then((res) => {
-      if (res.resultCode !== 200) {
-        return;
-      }
-      setTableDataSource(res.data ? res.data.list : []);
     });
   };
 
@@ -220,7 +151,13 @@ const TableList: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    getTableDataSource();
+    dispatch({
+      type: 'article/fetchAllArticle',
+      payload: {
+        currentPage: 1,
+        pageSize: 10,
+      },
+    });
   }, []);
 
   return (
@@ -230,54 +167,21 @@ const TableList: React.FC<{}> = () => {
         <Divider />
         <div className={styles.actionContainer}>
           <Space>
-            <Button onClick={() => handleModalVisible(true)} type="primary">
-              添加文章
-            </Button>
+            <Button type="primary">添加文章</Button>
             <Button>批量删除</Button>
           </Space>
         </div>
         <Table
           rowSelection={rowSelection}
-          dataSource={tableDataSource}
+          dataSource={articleList}
           columns={columns}
           expandable={{ expandedRowRender }}
         />
-        <CreateForm
-          onSubmit={async (value) => {
-            const success = await handleAdd(value);
-            if (success) {
-              handleModalVisible(false);
-              if (actionRef.current) {
-                actionRef.current.reload();
-              }
-            }
-          }}
-          onCancel={() => handleModalVisible(false)}
-          modalVisible={createModalVisible}
-        />
-        {stepFormValues && Object.keys(stepFormValues).length ? (
-          <UpdateForm
-            onSubmit={async (value) => {
-              const success = await handleUpdate(value);
-              if (success) {
-                handleModalVisible(false);
-                setStepFormValues({});
-                if (actionRef.current) {
-                  actionRef.current.reload();
-                }
-              }
-            }}
-            onCancel={() => {
-              handleUpdateModalVisible(false);
-              setStepFormValues({});
-            }}
-            updateModalVisible={updateModalVisible}
-            values={stepFormValues}
-          />
-        ) : null}
       </Card>
     </PageHeaderWrapper>
   );
 };
 
-export default TableList;
+export default connect(({ article }: ConnectState) => ({
+  articleList: article.articleList || [],
+}))(TableList);

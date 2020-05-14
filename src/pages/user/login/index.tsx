@@ -2,7 +2,7 @@ import { AlipayCircleOutlined, TaobaoCircleOutlined, WeiboCircleOutlined } from 
 import { Alert, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link, connect, Dispatch } from 'umi';
-import { StateType } from '@/models/login';
+import { LoginModelState } from '@/models/login';
 import { LoginParamsType, getVerifyCode } from '@/services/login';
 import { ConnectState } from '@/models/connect';
 import LoginFrom from './components/Login';
@@ -12,7 +12,7 @@ import styles from './style.less';
 const { Tab, UserName, Password, Mobile, Captcha, Submit, CaptchaImg } = LoginFrom;
 interface LoginProps {
   dispatch: Dispatch;
-  userLogin: StateType;
+  userLogin: LoginModelState;
   submitting?: boolean;
 }
 
