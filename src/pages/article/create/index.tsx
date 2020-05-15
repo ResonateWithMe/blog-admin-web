@@ -10,6 +10,7 @@ import { Category } from '@/interfaces/category';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card } from 'antd';
 import { ConnectState } from '@/models/connect';
+import { Store } from 'antd/es/form/interface';
 import ArticleEditForm from '../components/ArticleEditForm';
 
 interface CreateProps {
@@ -21,23 +22,20 @@ interface CreateProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CreatePage: React.FC<CreateProps> = (props) => {
-  const { articleDetail, allCategories, updating } = props;
+  const { updating } = props;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const onFinish = (values: Store) => {};
+
   return (
-    <PageHeaderWrapper title="新建文章">
+    <PageHeaderWrapper>
       <Card>
-        <ArticleEditForm
-          articleDetail={articleDetail}
-          allCategories={allCategories}
-          updating={updating}
-        />
+        <ArticleEditForm updating={updating} onFinish={onFinish} />
       </Card>
     </PageHeaderWrapper>
   );
 };
 
-export default connect(({ article, loading }: ConnectState) => ({
-  articleDetail: article.articleDetail?.article,
-  allCategories: article.articleDetail?.allCategories,
-  loading: loading.effects['article/fetchArticleDetail'],
+export default connect(({ loading }: ConnectState) => ({
   updating: loading.effects['article/updateArticle'],
 }))(CreatePage);

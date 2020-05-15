@@ -71,13 +71,25 @@ export default defineConfig({
               ],
             },
             {
+              path: '/article',
               name: 'article',
               icon: 'smile',
-              path: '/article',
+              hideChildrenInMenu: true,
               component: '../layouts/BlankLayout',
               routes: [
                 {
+                  path: '/article',
+                  redirect: '/article/list/listsearcharticles',
+                },
+                {
                   name: 'list',
+                  icon: 'smile',
+                  path: '/article/list/listsearcharticles',
+                  component: './article/list/ListSearchArticles',
+                },
+                {
+                  name: 'list',
+                  hideInMenu: true,
                   path: '/article/list',
                   component: './article/list',
                 },
@@ -97,6 +109,18 @@ export default defineConfig({
                   component: './404',
                 },
               ],
+            },
+            {
+              path: '/category',
+              name: 'category',
+              icon: 'smile',
+              component: './category',
+            },
+            {
+              path: '/tag',
+              name: 'tag',
+              icon: 'smile',
+              component: './tag',
             },
             {
               component: './404',

@@ -73,7 +73,7 @@ const AdvancedSearchForm: React.FC<FormProps> = (props) => {
           }}
         >
           <Button type="primary" htmlType="submit">
-            Search
+            查询
           </Button>
           <Button
             style={{
@@ -83,7 +83,7 @@ const AdvancedSearchForm: React.FC<FormProps> = (props) => {
               form.resetFields();
             }}
           >
-            Clear
+            重置
           </Button>
           <a
             style={{
@@ -93,7 +93,15 @@ const AdvancedSearchForm: React.FC<FormProps> = (props) => {
               setExpand(!expand);
             }}
           >
-            {expand ? <UpOutlined /> : <DownOutlined />} Collapse
+            {expand ? (
+              <>
+                <UpOutlined /> 收起
+              </>
+            ) : (
+              <>
+                <DownOutlined /> 展开
+              </>
+            )}
           </a>
         </Col>
       </Row>

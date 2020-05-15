@@ -13,28 +13,15 @@ import { Category } from '@/interfaces/category';
 import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
 import { Article } from '@/interfaces/article';
+import { Store } from 'antd/es/form/interface';
 import EditableTagGroup from './EditableTagGroup';
 
-interface Query {
-  id: string;
-  type: string;
-}
-
-interface Location {
-  hash: string;
-  key: string;
-  pathname: string;
-  query: Query;
-  search: string;
-  state: object;
-}
-
 interface EditProps {
-  location?: Location;
-  articleDetail: Article | undefined;
-  allCategories: Category[] | undefined;
+  articleDetail?: Article | undefined;
+  allCategories?: Category[] | undefined;
   loading?: boolean;
   updating?: boolean;
+  onFinish?: (values: Store) => void;
 }
 
 const tailLayout = {
@@ -55,7 +42,7 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 const uploadUrl = '/api/upload/file';
 
 const ArticleEditForm: React.FC<EditProps> = (props) => {
-  const { articleDetail, allCategories, updating } = props;
+  const { articleDetail, allCategories, updating, onFinish } = props;
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState('');
   const [form] = Form.useForm();
@@ -66,9 +53,6 @@ const ArticleEditForm: React.FC<EditProps> = (props) => {
       articleContent: text,
     });
   };
-  // @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onFinish = (values: Store) => {};
 
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -95,9 +79,6 @@ const ArticleEditForm: React.FC<EditProps> = (props) => {
         articleCoverImage: url,
       });
       setCoverImage(url);
-
-      // @ts-ignore
-      // setFileList(fileList);
     },
     listType: 'picture',
     multiple: true,

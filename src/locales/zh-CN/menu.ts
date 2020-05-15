@@ -54,5 +54,7 @@ export default {
   'menu.article.list': '文章列表',
   'menu.article.edit': '编辑文章',
   'menu.article.create': '新建文章',
+  'menu.category': '分类管理',
+  'menu.tag': '标签管理',
   // ---------- New Add End. ----------
 };

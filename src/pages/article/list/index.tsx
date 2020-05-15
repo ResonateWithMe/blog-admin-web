@@ -44,6 +44,12 @@ const TableList: React.FC<ArticleListProps> = (props) => {
     });
   };
 
+  const goCreatePage = () => {
+    history.push({
+      pathname: '/article/create',
+    });
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function handleDelete(articleId: number) {}
 
@@ -162,12 +168,14 @@ const TableList: React.FC<ArticleListProps> = (props) => {
 
   return (
     <PageHeaderWrapper>
-      <Card className={styles.article}>
+      <div className={styles.article}>
         <AdvancedSearchForm />
         <Divider />
         <div className={styles.actionContainer}>
           <Space>
-            <Button type="primary">添加文章</Button>
+            <Button type="primary" onClick={goCreatePage}>
+              添加文章
+            </Button>
             <Button>批量删除</Button>
           </Space>
         </div>
@@ -177,7 +185,7 @@ const TableList: React.FC<ArticleListProps> = (props) => {
           columns={columns}
           expandable={{ expandedRowRender }}
         />
-      </Card>
+      </div>
     </PageHeaderWrapper>
   );
 };

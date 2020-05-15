@@ -29,15 +29,21 @@ ol {
   list-style: none;
 }
 
+.ant-pro-table-search {
+  margin-bottom: 0 !important;
+}
+
 @media (max-width: @screen-xs) {
   .ant-table {
     width: 100%;
     overflow-x: auto;
+
     &-thead > tr,
     &-tbody > tr {
       > th,
       > td {
         white-space: pre;
+
         > span {
           display: block;
         }
@@ -50,5 +56,11 @@ ol {
 @media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
   body .ant-design-pro > .ant-layout {
     min-height: 100vh;
+  }
+}
+
+@media (max-width: 575px) {
+  .ant-pro-table-toolbar {
+    margin-right: 16px;
   }
 }
