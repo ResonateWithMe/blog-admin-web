@@ -1,5 +1,7 @@
 import { MenuDataItem } from '@ant-design/pro-layout';
 import { ArticleStateType } from '@/models/article';
+import { CategoryStateType } from '@/models/category';
+import { TagStateType } from '@/models/tag';
 import { GlobalModelState } from './global';
 import { DefaultSettings as SettingModelState } from '../../config/defaultSettings';
 import { UserModelState } from './user';
@@ -26,6 +28,8 @@ export interface ConnectState {
   user: UserModelState;
   login: LoginModelState;
   article: ArticleStateType;
+  tag: TagStateType;
+  category: CategoryStateType;
 }
 
 export interface Route extends MenuDataItem {

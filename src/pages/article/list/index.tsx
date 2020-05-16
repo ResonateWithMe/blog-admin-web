@@ -1,41 +1,39 @@
-import { Button, Divider, Space, Table, Card, Descriptions, Badge, Typography } from 'antd';
-import { history } from '@@/core/history';
-import React, { useState, useEffect } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Article } from '@/interfaces/article';
-import { connect } from 'umi';
+import React, { FC, useEffect } from 'react';
+import { Card, Col, Form, List, Row, Tag, Select } from 'antd';
+import { MessageOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { connect, Dispatch } from 'umi';
 import { ConnectState } from '@/models/connect';
-import { Dispatch } from '@@/plugin-dva/connect';
-import AdvancedSearchForm from '../components/AdvancedSearchForm';
-import styles from './index.less';
+import { Article } from '@/interfaces/article';
+import { Category } from '@/interfaces/category';
+import { Tag as TagType } from '@/interfaces/tag';
 
-const { Paragraph } = Typography;
+import { history } from '@@/core/history';
+import ArticleListContent from '../components/ArticleListContent';
+import StandardFormRow from '../components/StandardFormRow';
+import TagSelect from '../components/TagSelect';
+import styles from './style.less';
 
-interface ArticleListProps {
-  articleList: Article[];
+const { Option } = Select;
+const FormItem = Form.Item;
+
+interface ListSearchArticlesProps {
   dispatch: Dispatch;
+  articleList: Article[];
+  categoryList: Category[];
+  tagList: TagType[];
+  loading: boolean;
 }
 
-const TableList: React.FC<ArticleListProps> = (props) => {
-  const { articleList, dispatch } = props;
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
-  // const [isModalVisiable, SetModalVisiable] = useState<boolean>(false);
+const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
+  const { dispatch, articleList, categoryList, tagList, loading } = props;
+  const [form] = Form.useForm();
+  // const setOwner = () => {
+  //   form.setFieldsValue({
+  //     owner: ['wzj'],
+  //   });
+  // };
 
-  /**
-   * 行选
-   * @param selectedRowKeys
-   */
-  // eslint-disable-next-line no-shadow
-  const onSelectChange = (selectedRowKeys: React.SetStateAction<string[]>) => {
-    setSelectedRowKeys(selectedRowKeys);
-  };
-
-  /**
-   * 进入对应文章Id的编辑页面
-   * @constructor
-   * @param articleId
-   */
-  const goEditPage = (articleId: number) => {
+  const goEditPage = (articleId: string | number) => {
     history.push({
       pathname: '/article/edit',
       query: {
@@ -44,116 +42,46 @@ const TableList: React.FC<ArticleListProps> = (props) => {
     });
   };
 
-  const goCreatePage = () => {
-    history.push({
-      pathname: '/article/create',
-    });
+  const deleteArticle = () => {};
+
+  const IconText: React.FC<{
+    type: string;
+    text: React.ReactNode;
+    handleClick?: () => void;
+  }> = ({ type, text, handleClick }) => {
+    switch (type) {
+      case 'message':
+        return (
+          <span>
+            <MessageOutlined style={{ marginRight: 8 }} />
+            {text}
+          </span>
+        );
+      case 'edit':
+        return (
+          <span onClick={handleClick}>
+            <EditOutlined style={{ marginRight: 8 }} />
+            {text}
+          </span>
+        );
+      case 'delete':
+        return (
+          <span onClick={handleClick}>
+            <DeleteOutlined style={{ marginRight: 8 }} />
+            {text}
+          </span>
+        );
+      default:
+        return null;
+    }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function handleDelete(articleId: number) {}
-
-  const columns = [
-    {
-      title: '序号',
-      dataIndex: 'articleId',
-      key: 'articleId',
+  const formItemLayout = {
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 24 },
+      md: { span: 12 },
     },
-    {
-      title: '文章标题',
-      dataIndex: 'articleTitle',
-      key: 'articleTitle',
-    },
-    {
-      title: '文章自定义路径url',
-      dataIndex: 'articleSubUrl',
-      key: 'articleSubUrl',
-    },
-    {
-      title: '文章分类ID',
-      dataIndex: 'articleCategoryId',
-      key: 'articleCategoryId',
-    },
-    {
-      title: '操作',
-      dataIndex: '',
-      key: 'x',
-      render: (text: { articleId: number }) => (
-        <Space>
-          <a onClick={() => goEditPage(text.articleId)}>编辑</a>
-          <a onClick={() => handleDelete(text.articleId)}>删除</a>
-        </Space>
-      ),
-    },
-  ];
-  const rowSelection = {
-    selectedRowKeys,
-    // @ts-ignore
-    onChange: (keys) => onSelectChange(keys),
-  };
-
-  const articleStatusType = {
-    1: {
-      status: 'success',
-      text: '发布',
-    },
-    0: {
-      status: 'default',
-      text: '草稿',
-    },
-  };
-  const enableCommentType = {
-    1: {
-      status: 'success',
-      text: '开启（允许评论）',
-    },
-    0: {
-      status: 'default',
-      text: '关闭（不允许评论）',
-    },
-  };
-
-  const expandedRowRender = (record: Article) => {
-    const {
-      articleCategoryName,
-      articleTags,
-      articleStatus,
-      articleViews,
-      enableComment,
-      createTime,
-      updateTime,
-      articleContent,
-      articleCoverImage,
-    } = record;
-    return (
-      <Card>
-        <Descriptions title="文章信息">
-          <Descriptions.Item label="文章分类名称">{articleCategoryName}</Descriptions.Item>
-          <Descriptions.Item label="文章标签">{articleTags}</Descriptions.Item>
-          <Descriptions.Item label="文章状态">
-            <Badge
-              status={articleStatusType[articleStatus].status}
-              text={articleStatusType[articleStatus].text}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="阅读量">{articleViews}</Descriptions.Item>
-          <Descriptions.Item label="文章封面" span={2}>
-            {articleCoverImage}
-          </Descriptions.Item>
-          <Descriptions.Item label="开启评论">
-            <Badge
-              status={enableCommentType[enableComment].status}
-              text={enableCommentType[enableComment].text}
-            />
-          </Descriptions.Item>
-          <Descriptions.Item label="创建时间">{createTime}</Descriptions.Item>
-          <Descriptions.Item label="更新时间">{updateTime}</Descriptions.Item>
-          <Descriptions.Item label="文章内容" span={3}>
-            <Paragraph ellipsis={{ rows: 3, expandable: true }}>{articleContent}</Paragraph>
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-    );
   };
 
   useEffect(() => {
@@ -164,32 +92,165 @@ const TableList: React.FC<ArticleListProps> = (props) => {
         pageSize: 10,
       },
     });
+    dispatch({
+      type: 'category/fetchAllCategory',
+    });
+    dispatch({
+      type: 'tag/fetchAllTag',
+      payload: {
+        currentPage: 1,
+        pageSize: 10,
+      },
+    });
   }, []);
 
   return (
-    <PageHeaderWrapper>
-      <div className={styles.article}>
-        <AdvancedSearchForm />
-        <Divider />
-        <div className={styles.actionContainer}>
-          <Space>
-            <Button type="primary" onClick={goCreatePage}>
-              添加文章
-            </Button>
-            <Button>批量删除</Button>
-          </Space>
-        </div>
-        <Table
-          rowSelection={rowSelection}
+    <>
+      <Card bordered={false}>
+        <Form
+          layout="inline"
+          form={form}
+          initialValues={{
+            owner: ['wjh', 'zxx'],
+          }}
+          onValuesChange={() => {
+            /* dispatch({
+              type: 'articleAndlistAndListSearchArticles/fetch',
+              payload: {
+                count: 8,
+              },
+            }); */
+          }}
+        >
+          <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
+            <FormItem name="categoryList">
+              <TagSelect expandable>
+                {categoryList.map((item) => {
+                  return (
+                    <TagSelect.Option value={item.categoryId} key={item.categoryId}>
+                      {item.categoryName}
+                    </TagSelect.Option>
+                  );
+                })}
+              </TagSelect>
+            </FormItem>
+          </StandardFormRow>
+          <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
+            <FormItem name="tagList">
+              <TagSelect expandable>
+                {tagList.map((tag) => {
+                  return (
+                    <TagSelect.Option value={tag.tagId} key={tag.tagId}>
+                      {tag.tagName}
+                    </TagSelect.Option>
+                  );
+                })}
+              </TagSelect>
+            </FormItem>
+          </StandardFormRow>
+          <StandardFormRow title="其它选项" grid last>
+            <Row gutter={16}>
+              <Col xl={8} lg={10} md={12} sm={24} xs={24}>
+                <FormItem {...formItemLayout} label="文章状态" name="articleStatus">
+                  <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
+                    <Option value="1">已发布</Option>
+                    <Option value="0">未发布</Option>
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col xl={8} lg={10} md={12} sm={24} xs={24}>
+                <FormItem {...formItemLayout} label="是否可评论" name="enableComment">
+                  <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
+                    <Option value="1">可评论</Option>
+                    <Option value="0">不可评论</Option>
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+          </StandardFormRow>
+          {/* 预留
+            <StandardFormRow title="作者" grid>
+            <FormItem name="owner" noStyle>
+              <Select mode="multiple" placeholder="选择标签" style={{minWidth: 200}}>
+                {tagList.map((owner) => (
+                  <Option key={owner.tagId} value={owner.tagId}>
+                    {owner.tagName}
+                  </Option>
+                ))}
+              </Select>
+            </FormItem>
+            <a className={styles.selfTrigger} onClick={setOwner}>
+              只看自己的
+            </a>
+          </StandardFormRow> */}
+        </Form>
+      </Card>
+      <Card
+        style={{ marginTop: 24 }}
+        bordered={false}
+        bodyStyle={{ padding: '8px 32px 32px 32px' }}
+      >
+        <List<Article>
+          size="large"
+          loading={articleList.length === 0 ? loading : false}
+          rowKey="id"
+          itemLayout="vertical"
+          pagination={{
+            onChange: (page) => {
+              console.log(page);
+            },
+            pageSize: 3,
+          }}
           dataSource={articleList}
-          columns={columns}
-          expandable={{ expandedRowRender }}
+          renderItem={(item) => (
+            <List.Item
+              key={item.key}
+              actions={[
+                <IconText key="message" type="message" text={item.articleViews} />,
+                <IconText
+                  key="edit"
+                  type="edit"
+                  text="编辑"
+                  handleClick={() => goEditPage(item.articleId)}
+                />,
+                <IconText key="delete" type="delete" text="删除" handleClick={deleteArticle} />,
+              ]}
+              extra={
+                <div className={styles.listItemExtra}>
+                  <img
+                    src="https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/34fae6cd7b899e5195d5334f4da7d933c8950d15.jpg"
+                    width="200"
+                    alt=""
+                  />
+                </div>
+              }
+            >
+              <List.Item.Meta
+                title={
+                  <a className={styles.listItemMetaTitle} href={item.articleSubUrl}>
+                    {item.articleTitle}
+                  </a>
+                }
+                description={
+                  <span>
+                    {item.articleTags.split(',').map((tag) => {
+                      return <Tag key={tag}>{tag}</Tag>;
+                    })}
+                  </span>
+                }
+              />
+              <ArticleListContent data={item} />
+            </List.Item>
+          )}
         />
-      </div>
-    </PageHeaderWrapper>
+      </Card>
+    </>
   );
 };
 
-export default connect(({ article }: ConnectState) => ({
+export default connect(({ article, category, tag, loading }: ConnectState) => ({
   articleList: article.articleList || [],
-}))(TableList);
+  categoryList: category.categoryList || [],
+  tagList: tag.tagList || [],
+  loading: loading.effects['article/fetchAllArticle'] || false,
+}))(ListSearchArticles);

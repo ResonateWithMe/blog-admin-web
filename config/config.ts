@@ -79,13 +79,7 @@ export default defineConfig({
               routes: [
                 {
                   path: '/article',
-                  redirect: '/article/list/listsearcharticles',
-                },
-                {
-                  name: 'list',
-                  icon: 'smile',
-                  path: '/article/list/listsearcharticles',
-                  component: './article/list/ListSearchArticles',
+                  redirect: '/article/list',
                 },
                 {
                   name: 'list',

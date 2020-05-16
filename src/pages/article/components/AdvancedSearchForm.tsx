@@ -9,12 +9,12 @@ import { Dispatch } from '@@/plugin-dva/connect';
 import styles from './styles/AdvancedSearchForm.less';
 
 interface FormProps {
-  allCategories: Category[];
+  categoryList: Category[];
   dispatch: Dispatch;
 }
 
 const AdvancedSearchForm: React.FC<FormProps> = (props) => {
-  const { allCategories, dispatch } = props;
+  const { categoryList, dispatch } = props;
   const [expand, setExpand] = useState(false);
   // const [categoriesAll, setCategoriesAll] = useState<Category[]>([]);
   const [form] = Form.useForm();
@@ -53,7 +53,7 @@ const AdvancedSearchForm: React.FC<FormProps> = (props) => {
             rules={[{ required: true, message: '请选择文章分类!' }]}
           >
             <Select style={{ width: '100%' }} placeholder="请选择文章分类">
-              {allCategories.map((item) => {
+              {categoryList.map((item) => {
                 return (
                   <Select.Option value={item.categoryId} key={item.categoryId}>
                     {item.categoryName}
@@ -109,6 +109,6 @@ const AdvancedSearchForm: React.FC<FormProps> = (props) => {
   );
 };
 
-export default connect(({ article }: ConnectState) => ({
-  allCategories: article.allCategories || [],
+export default connect(({ category }: ConnectState) => ({
+  categoryList: category.categoryList || [],
 }))(AdvancedSearchForm);
