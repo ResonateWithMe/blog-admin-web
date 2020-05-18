@@ -71,8 +71,14 @@ export default defineConfig({
               ],
             },
             {
-              path: '/article',
+              name: 'article.create',
+              icon: 'smile',
+              path: '/article/create',
+              component: './article/create',
+            },
+            {
               name: 'article',
+              path: '/article',
               icon: 'smile',
               hideChildrenInMenu: true,
               component: '../layouts/BlankLayout',
@@ -94,27 +100,33 @@ export default defineConfig({
                   component: './article/edit',
                 },
                 {
-                  name: 'create',
-                  path: '/article/create',
-                  hideInMenu: true,
-                  component: './article/create',
-                },
-                {
                   component: './404',
                 },
               ],
             },
             {
-              path: '/category',
               name: 'category',
+              path: '/category',
               icon: 'smile',
               component: './category',
             },
             {
-              path: '/tag',
               name: 'tag',
+              path: '/tag',
               icon: 'smile',
               component: './tag',
+            },
+            {
+              name: 'comment',
+              path: '/comment',
+              icon: 'smile',
+              component: './comment',
+            },
+            {
+              name: 'links',
+              path: '/links',
+              icon: 'smile',
+              component: './links',
             },
             {
               component: './404',

@@ -1,7 +1,7 @@
 /**
- * @description tag
+ * @description index
  * @author ShiLin
- * @date 2020/5/15 11:49
+ * @date 2020/5/15 11:30
  */
 import React, { useRef, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
@@ -208,7 +208,7 @@ export default () => {
         }}
         rowKey="id"
         dateFormatter="string"
-        headerTitle=""
+        headerTitle="基础 Table"
         toolBarRender={() => [
           <Button key="3" type="primary">
             <PlusOutlined />

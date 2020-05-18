@@ -10,7 +10,6 @@ import { Tag as TagType } from '@/interfaces/tag';
 import { history } from '@@/core/history';
 import ArticleListContent from '../components/ArticleListContent';
 import StandardFormRow from '../components/StandardFormRow';
-import TagSelect from '../components/TagSelect';
 import styles from './style.less';
 
 const { Option } = Select;
@@ -25,7 +24,7 @@ interface ListSearchArticlesProps {
 }
 
 const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
-  const { dispatch, articleList, categoryList, tagList, loading } = props;
+  const { dispatch, articleList, loading } = props;
   const [form] = Form.useForm();
   // const setOwner = () => {
   //   form.setFieldsValue({
@@ -123,30 +122,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           }}
         >
           <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
-            <FormItem name="categoryList">
-              <TagSelect expandable>
-                {categoryList.map((item) => {
-                  return (
-                    <TagSelect.Option value={item.categoryId} key={item.categoryId}>
-                      {item.categoryName}
-                    </TagSelect.Option>
-                  );
-                })}
-              </TagSelect>
-            </FormItem>
+            <FormItem name="categoryList">a</FormItem>
           </StandardFormRow>
           <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
-            <FormItem name="tagList">
-              <TagSelect expandable>
-                {tagList.map((tag) => {
-                  return (
-                    <TagSelect.Option value={tag.tagId} key={tag.tagId}>
-                      {tag.tagName}
-                    </TagSelect.Option>
-                  );
-                })}
-              </TagSelect>
-            </FormItem>
+            <FormItem name="tagList">a</FormItem>
           </StandardFormRow>
           <StandardFormRow title="其它选项" grid last>
             <Row gutter={16}>

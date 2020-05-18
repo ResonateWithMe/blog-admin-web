@@ -16,11 +16,12 @@ import { Article } from '@/interfaces/article';
 import { Store } from 'antd/es/form/interface';
 import EditableTagGroup from './EditableTagGroup';
 
-interface EditProps {
+interface EditFormProps {
   articleDetail?: Article | undefined;
   allCategories?: Category[] | undefined;
   loading?: boolean;
   updating?: boolean;
+  submitTitle?: string;
   onFinish?: (values: Store) => void;
 }
 
@@ -41,8 +42,8 @@ const mdParser = new MarkdownIt(/* Markdown-it options */);
 
 const uploadUrl = '/api/upload/file';
 
-const ArticleEditForm: React.FC<EditProps> = (props) => {
-  const { articleDetail, allCategories, updating, onFinish } = props;
+const ArticleEditForm: React.FC<EditFormProps> = (props) => {
+  const { articleDetail, allCategories, updating, onFinish, submitTitle } = props;
   const [articleTags, setArticleTags] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState('');
   const [form] = Form.useForm();
@@ -204,7 +205,7 @@ const ArticleEditForm: React.FC<EditProps> = (props) => {
       </Form.Item>
       <Form.Item {...tailLayout}>
         <Button block type="primary" htmlType="submit" loading={updating}>
-          更新文章
+          {submitTitle || '更新文章'}
         </Button>
       </Form.Item>
     </Form>

@@ -8,11 +8,10 @@ import { Reducer, Effect } from 'umi';
 import { Article } from '@/interfaces/article';
 import { queryArticleList, queryArticleDetail, updateArticle } from '@/services/article';
 import { message, notification } from 'antd';
-import { ArticleDetail } from '@/interfaces/article_detail';
 
 export interface ArticleStateType {
   articleList?: Article[];
-  articleDetail?: ArticleDetail;
+  articleDetail?: Article;
   detailSpinning?: boolean;
 }
 

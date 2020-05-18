@@ -74,9 +74,9 @@ const Edit: React.FC<EditProps> = (props) => {
   );
 };
 
-export default connect(({ article, loading }: ConnectState) => ({
-  articleDetail: article.articleDetail?.article,
-  allCategories: article.articleDetail?.allCategories,
+export default connect(({ article, category, loading }: ConnectState) => ({
+  articleDetail: article.articleDetail,
+  allCategories: category.categoryList,
   loading: loading.effects['article/fetchArticleDetail'],
   updating: loading.effects['article/updateArticle'],
 }))(Edit);
