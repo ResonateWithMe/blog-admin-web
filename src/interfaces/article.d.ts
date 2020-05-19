@@ -3,6 +3,8 @@
  * @author ShiLin
  * @date 2020/5/6 9:47 下午
  */
+import { Tag } from '@/interfaces/tag';
+
 export interface Article {
   articleCategoryId: number | string;
   articleCategoryName?: string;
@@ -11,7 +13,7 @@ export interface Article {
   articleId: number | string;
   articleStatus: number;
   articleSubUrl?: string;
-  articleTags: string;
+  articleTags: Tag[];
   articleTitle: string;
   articleViews?: number;
   createTime?: string;

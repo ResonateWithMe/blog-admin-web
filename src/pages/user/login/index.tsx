@@ -3,13 +3,13 @@ import { Alert, Checkbox } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { Link, connect, Dispatch } from 'umi';
 import { LoginModelState } from '@/models/login';
-import { LoginParamsType, getVerifyCode } from '@/services/login';
+import { LoginParamsType } from '@/services/login';
 import { ConnectState } from '@/models/connect';
 import LoginFrom from './components/Login';
 
 import styles from './style.less';
 
-const { Tab, UserName, Password, Mobile, Captcha, Submit, CaptchaImg } = LoginFrom;
+const { Tab, UserName, Password, Mobile, Captcha, Submit } = LoginFrom;
 interface LoginProps {
   dispatch: Dispatch;
   userLogin: LoginModelState;
@@ -34,8 +34,8 @@ const Login: React.FC<LoginProps> = (props) => {
   const { status, type: loginType } = userLogin;
   const [autoLogin, setAutoLogin] = useState(true);
   const [type, setType] = useState<string>('account');
-  const [blobUrl, setBlobUrl] = useState<string>('');
-  const [loadingBlob, setLoadingBlob] = useState<boolean>(false);
+  // const [blobUrl, setBlobUrl] = useState<string>('');
+  // const [loadingBlob, setLoadingBlob] = useState<boolean>(false);
 
   const handleSubmit = (values: LoginParamsType) => {
     const { dispatch } = props;
@@ -46,12 +46,12 @@ const Login: React.FC<LoginProps> = (props) => {
   };
 
   const getVerificationImg = () => {
-    setLoadingBlob(true);
-    getVerifyCode().then((res) => {
-      setLoadingBlob(false);
-      if (!res) return;
-      setBlobUrl(window.URL.createObjectURL(res));
-    });
+    // setLoadingBlob(true);
+    // getVerifyCode().then((res) => {
+    //   setLoadingBlob(false);
+    //   if (!res) return;
+    //   setBlobUrl(window.URL.createObjectURL(res));
+    // });
   };
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const Login: React.FC<LoginProps> = (props) => {
               },
             ]}
           />
-          <CaptchaImg
+          {/* <CaptchaImg
             name="verifyCode"
             placeholder="验证码"
             blobUrl={blobUrl}
@@ -98,7 +98,7 @@ const Login: React.FC<LoginProps> = (props) => {
                 message: '请输入验证码！',
               },
             ]}
-          />
+          /> */}
         </Tab>
         <Tab key="mobile" tab="手机号登录">
           {status === 'error' && loginType === 'mobile' && !submitting && (

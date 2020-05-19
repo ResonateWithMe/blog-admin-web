@@ -96,7 +96,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
       articleCoverImage: articleDetail?.articleCoverImage,
     });
     setCoverImage(articleDetail?.articleCoverImage || '');
-    setArticleTags(articleDetail?.articleTags.split(',') || []);
+    setArticleTags(articleDetail?.articleTags.map((item) => item.tagName) || []);
   }, [articleDetail]);
 
   useEffect(() => {
@@ -119,7 +119,6 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
         rules={[{ required: true, message: '请输入文章标题!' }]}
       >
         <TextArea placeholder="请输入文章标题" autoSize={{ minRows: 1, maxRows: 6 }} />
-        {/* <Input placeholder="请输入文章标题" /> */}
       </Form.Item>
       <Form.Item
         label="分类"

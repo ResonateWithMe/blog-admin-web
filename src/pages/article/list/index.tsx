@@ -148,15 +148,15 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           }}
         >
           <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
-            <FormItem name="categoryList">a</FormItem>
+            <FormItem>a</FormItem>
           </StandardFormRow>
           <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
-            <FormItem name="tagList">a</FormItem>
+            <FormItem>a</FormItem>
           </StandardFormRow>
           <StandardFormRow title="其它选项" grid last>
             <Row gutter={16}>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
-                <FormItem {...formItemLayout} label="文章状态" name="articleStatus">
+                <FormItem {...formItemLayout} label="文章状态">
                   <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
                     <Option value="1">已发布</Option>
                     <Option value="0">未发布</Option>
@@ -164,7 +164,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                 </FormItem>
               </Col>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
-                <FormItem {...formItemLayout} label="是否可评论" name="enableComment">
+                <FormItem {...formItemLayout} label="是否可评论">
                   <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
                     <Option value="1">可评论</Option>
                     <Option value="0">不可评论</Option>
@@ -243,9 +243,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                 }
                 description={
                   <span>
-                    {item.articleTags.split(',').map((tag) => {
-                      return <Tag key={tag}>{tag}</Tag>;
-                    })}
+                    {item.articleTags.length &&
+                      item.articleTags.map((tag) => {
+                        return <Tag key={tag.tagId}>{tag.tagName}</Tag>;
+                      })}
                   </span>
                 }
               />
