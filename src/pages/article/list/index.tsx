@@ -1,6 +1,11 @@
 import React, { FC, useEffect } from 'react';
-import { Card, Col, Form, List, Row, Tag, Select } from 'antd';
-import { MessageOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Col, Form, List, Row, Tag, Select, Modal } from 'antd';
+import {
+  MessageOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import { connect, Dispatch } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { Article } from '@/interfaces/article';
@@ -12,6 +17,7 @@ import ArticleListContent from '../components/ArticleListContent';
 import StandardFormRow from '../components/StandardFormRow';
 import styles from './style.less';
 
+const { confirm } = Modal;
 const { Option } = Select;
 const FormItem = Form.Item;
 
@@ -21,16 +27,12 @@ interface ListSearchArticlesProps {
   categoryList: Category[];
   tagList: TagType[];
   loading: boolean;
+  deleting: boolean;
 }
 
 const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
-  const { dispatch, articleList, loading } = props;
+  const { dispatch, articleList, loading, deleting } = props;
   const [form] = Form.useForm();
-  // const setOwner = () => {
-  //   form.setFieldsValue({
-  //     owner: ['wzj'],
-  //   });
-  // };
 
   const goEditPage = (articleId: string | number) => {
     history.push({
@@ -41,7 +43,21 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
     });
   };
 
-  const deleteArticle = () => {};
+  const deleteArticle = (articleId: React.ReactText) => {
+    confirm({
+      title: '删除提示',
+      icon: <ExclamationCircleOutlined />,
+      content: '您想要删除这篇文章？',
+      onOk() {
+        dispatch({
+          type: 'article/deleteArticle',
+          payload: [articleId],
+        });
+        return deleting;
+      },
+      onCancel() {},
+    });
+  };
 
   const IconText: React.FC<{
     type: string;
@@ -102,6 +118,16 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       },
     });
   }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: 'article/fetchAllArticle',
+      payload: {
+        currentPage: 1,
+        pageSize: 10,
+      },
+    });
+  }, [deleting]);
 
   return (
     <>
@@ -192,7 +218,12 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                   text="编辑"
                   handleClick={() => goEditPage(item.articleId)}
                 />,
-                <IconText key="delete" type="delete" text="删除" handleClick={deleteArticle} />,
+                <IconText
+                  key="delete"
+                  type="delete"
+                  text="删除"
+                  handleClick={() => deleteArticle(item.articleId)}
+                />,
               ]}
               extra={
                 <div className={styles.listItemExtra}>
@@ -232,4 +263,5 @@ export default connect(({ article, category, tag, loading }: ConnectState) => ({
   categoryList: category.categoryList || [],
   tagList: tag.tagList || [],
   loading: loading.effects['article/fetchAllArticle'] || false,
+  deleting: loading.effects['article/deleteArticle'] || false,
 }))(ListSearchArticles);

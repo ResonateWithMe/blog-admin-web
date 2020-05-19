@@ -13,9 +13,23 @@ export async function queryArticleDetail(articleId: string): Promise<Result<Arti
   return request(`/api/article/detail/${articleId}`);
 }
 
-export async function updateArticle(params: Article): Promise<Result<any>> {
+export async function updateArticle(params: Article): Promise<Result<null>> {
   return request('/api/article/update', {
     method: 'POST',
+    data: params,
+  });
+}
+
+export async function createArticle(params: Article): Promise<Result<null>> {
+  return request('/api/article/create', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function deleteArticle(params: number[]): Promise<null> {
+  return request('/api/article/delete', {
+    method: 'DELETE',
     data: params,
   });
 }

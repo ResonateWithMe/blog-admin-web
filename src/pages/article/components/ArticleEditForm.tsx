@@ -88,7 +88,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
   useEffect(() => {
     form.setFieldsValue({
       articleTitle: articleDetail?.articleTitle,
-      articleTags: articleDetail?.articleTags.split(','),
+      articleTags: articleDetail?.articleTags,
       articleCategoryId: articleDetail?.articleCategoryId,
       articleContent: articleDetail?.articleContent,
       articleStatus: articleDetail?.articleStatus,
@@ -98,6 +98,12 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
     setCoverImage(articleDetail?.articleCoverImage || '');
     setArticleTags(articleDetail?.articleTags.split(',') || []);
   }, [articleDetail]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      articleTags: articleTags && articleTags.length && articleTags.toString(),
+    });
+  }, [articleTags]);
 
   return (
     <Form
@@ -138,7 +144,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
       <Form.Item
         label="标签"
         name="articleTags"
-        rules={[{ required: true, message: '请输入文章标签!' }]}
+        rules={[{ required: false, message: '请输入文章标签!' }]}
       >
         <EditableTagGroup tags={articleTags} setTags={setArticleTags} />
       </Form.Item>
@@ -193,7 +199,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
           wrapperCol: { span: 20 },
         }}
         name="articleContent"
-        rules={[{ required: true, message: '请输入文章内容!' }]}
+        rules={[{ required: false, message: '请输入文章内容!' }]}
       >
         <MdEditor
           placeholder="请输入文章内容"

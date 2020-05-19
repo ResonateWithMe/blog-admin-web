@@ -36,13 +36,6 @@ interface EditProps {
 const Edit: React.FC<EditProps> = (props) => {
   const { location, articleDetail, allCategories, dispatch, loading, updating } = props;
 
-  useEffect(() => {
-    dispatch({
-      type: 'article/fetchArticleDetail',
-      payload: location.query.id,
-    });
-  }, []);
-
   const onFinish = (values: Store) => {
     try {
       dispatch({
@@ -50,13 +43,19 @@ const Edit: React.FC<EditProps> = (props) => {
         payload: {
           ...values,
           articleId: location.query.id,
-          articleTags: values.articleTags.toString(),
         },
       });
     } catch (e) {
       message.error('更新失败');
     }
   };
+
+  useEffect(() => {
+    dispatch({
+      type: 'article/fetchArticleDetail',
+      payload: location.query.id,
+    });
+  }, []);
 
   return (
     <PageHeaderWrapper title="文章编辑">

@@ -8,7 +8,7 @@ import { connect } from '@@/plugin-dva/exports';
 import { Article } from '@/interfaces/article';
 import { Category } from '@/interfaces/category';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Card } from 'antd';
+import { Card, message } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { Store } from 'antd/es/form/interface';
 import { Dispatch } from 'umi';
@@ -22,12 +22,21 @@ interface CreateProps {
   updating?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CreatePage: React.FC<CreateProps> = (props) => {
   const { dispatch, updating, allCategories } = props;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onFinish = (values: Store) => {};
+  const onFinish = (values: Store) => {
+    try {
+      dispatch({
+        type: 'article/createArticle',
+        payload: {
+          ...values,
+        },
+      });
+    } catch (e) {
+      message.error('新建失败');
+    }
+  };
 
   useEffect(() => {
     dispatch({
