@@ -43,6 +43,7 @@ const Edit: React.FC<EditProps> = (props) => {
         payload: {
           ...values,
           articleId: location.query.id,
+          articleTags: JSON.stringify(values.articleTags),
         },
       });
     } catch (e) {

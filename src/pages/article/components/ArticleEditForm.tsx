@@ -101,7 +101,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
 
   useEffect(() => {
     form.setFieldsValue({
-      articleTags: articleTags && articleTags.length && articleTags.toString(),
+      articleTags,
     });
   }, [articleTags]);
 
