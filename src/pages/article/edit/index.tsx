@@ -43,7 +43,6 @@ const Edit: React.FC<EditProps> = (props) => {
         payload: {
           ...values,
           articleId: location.query.id,
-          articleTags: JSON.stringify(values.articleTags),
         },
       });
     } catch (e) {
@@ -52,6 +51,9 @@ const Edit: React.FC<EditProps> = (props) => {
   };
 
   useEffect(() => {
+    dispatch({
+      type: 'category/fetchAllCategory',
+    });
     dispatch({
       type: 'article/fetchArticleDetail',
       payload: location.query.id,

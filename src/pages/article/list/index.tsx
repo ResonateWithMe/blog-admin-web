@@ -243,10 +243,9 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                 }
                 description={
                   <span>
-                    {item.articleTags.length &&
-                      item.articleTags.map((tag) => {
-                        return <Tag key={tag.tagId}>{tag.tagName}</Tag>;
-                      })}
+                    {item.articleTags.map((tag) => {
+                      return <Tag key={tag.tagId}>{tag.tagName}</Tag>;
+                    })}
                   </span>
                 }
               />

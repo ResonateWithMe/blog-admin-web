@@ -38,7 +38,7 @@ const Model: LoginModelType = {
         type: 'changeLoginStatus',
         payload: response,
       });
-      if (response.resultCode !== 200) {
+      if (response.code !== 200) {
         message.error(`${response.message}`);
         return;
       }

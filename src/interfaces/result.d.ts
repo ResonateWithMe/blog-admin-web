@@ -5,7 +5,7 @@
  */
 
 export interface Result<T> {
-  resultCode: number;
+  code: number;
   message: string;
   data: T;
 }

@@ -63,7 +63,7 @@ const ArticleModel: ArticleModelType = {
     },
     *updateArticle({ payload }, { call }) {
       const response = yield call(updateArticle, payload);
-      if (response.resultCode !== 200) {
+      if (response.code !== 200) {
         message.error('更新文章失败');
         return;
       }
@@ -74,7 +74,7 @@ const ArticleModel: ArticleModelType = {
     },
     *createArticle({ payload }, { call }) {
       const response = yield call(createArticle, payload);
-      if (response.resultCode !== 200) {
+      if (response.code !== 200) {
         message.error('新建文章失败');
         return;
       }
@@ -85,7 +85,7 @@ const ArticleModel: ArticleModelType = {
     },
     *deleteArticle({ payload }, { call }) {
       const response = yield call(deleteArticle, payload);
-      if (response.resultCode !== 200) {
+      if (response.code !== 200) {
         message.error('删除文章失败');
         return;
       }
