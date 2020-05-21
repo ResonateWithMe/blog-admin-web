@@ -6,9 +6,11 @@
 import { Result } from '@/interfaces/Result';
 import request from 'umi-request';
 import { Category } from '@/interfaces/Category';
+import { PaginationParams } from '@/interfaces/PaginationParams';
 
-export async function findCategoryList(): Promise<Result<Category[]>> {
+export async function findCategoryList(params: PaginationParams): Promise<Result<Category[]>> {
   return request('/api/category/list', {
     method: 'GET',
+    params,
   });
 }
