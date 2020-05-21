@@ -4,7 +4,7 @@
  * @date 2020/5/16 5:32 下午
  */
 import { Effect, Reducer } from '@@/plugin-dva/connect';
-import { Tag } from '@/interfaces/tag';
+import { Tag } from '@/interfaces/Tag';
 import { findTagList } from '@/services/tag';
 
 export interface TagStateType {

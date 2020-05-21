@@ -5,7 +5,7 @@
  */
 
 import { Reducer, Effect } from 'umi';
-import { Article } from '@/interfaces/article';
+import { Article } from '@/interfaces/Article';
 import {
   queryArticleList,
   queryArticleDetail,

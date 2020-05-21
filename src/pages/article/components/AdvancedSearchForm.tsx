@@ -4,7 +4,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 // import {Category} from "@/interfaces/category";
 import { connect } from '@@/plugin-dva/exports';
 import { ConnectState } from '@/models/connect';
-import { Category } from '@/interfaces/category';
+import { Category } from '@/interfaces/Category';
 import { Dispatch } from '@@/plugin-dva/connect';
 import styles from './styles/AdvancedSearchForm.less';
 

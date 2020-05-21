@@ -1,9 +1,9 @@
 /**
- * @description article
+ * @description Article
  * @author ShiLin
  * @date 2020/5/6 9:47 下午
  */
-import { Tag } from '@/interfaces/tag';
+import { Tag } from '@/interfaces/Tag';
 
 export interface Article {
   articleCategoryId: number | string;

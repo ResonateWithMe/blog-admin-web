@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 import moment from 'moment';
-import { Article } from '@/interfaces/article';
+import { Article } from '@/interfaces/Article';
 import styles from './index.less';
 
 const { Paragraph } = Typography;

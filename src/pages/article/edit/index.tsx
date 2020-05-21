@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Spin, Card, message } from 'antd';
-import { Category } from '@/interfaces/category';
+import { Category } from '@/interfaces/Category';
 import { connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { Dispatch } from '@@/plugin-dva/connect';
-import { Article } from '@/interfaces/article';
+import { Article } from '@/interfaces/Article';
 import ArticleEditForm from '@/pages/article/components/ArticleEditForm';
 import { Store } from 'antd/es/form/interface';
 

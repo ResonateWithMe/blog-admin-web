@@ -1,7 +1,7 @@
 import request from 'umi-request';
-import { Result } from '@/interfaces/result';
-import { Article } from '@/interfaces/article';
-import { PaginationParams } from '@/interfaces/pagination_params';
+import { Result } from '@/interfaces/Result';
+import { Article } from '@/interfaces/Article';
+import { PaginationParams } from '@/interfaces/PaginationParams';
 
 export async function queryArticleList(params?: PaginationParams) {
   return request('/api/article/list', {

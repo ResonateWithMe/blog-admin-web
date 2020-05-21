@@ -9,10 +9,10 @@ import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Form, Button, Select, Upload, Card, Radio } from 'antd';
 import { UploadOutlined } from '@ant-design/icons/lib';
-import { Category } from '@/interfaces/category';
+import { Category } from '@/interfaces/Category';
 import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
-import { Article } from '@/interfaces/article';
+import { Article } from '@/interfaces/Article';
 import { Store } from 'antd/es/form/interface';
 import EditableTagGroup from './EditableTagGroup';
 

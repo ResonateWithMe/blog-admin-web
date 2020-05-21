@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Card, Col, Form, List, Row, Tag, Select, Modal } from 'antd';
 import {
   MessageOutlined,
@@ -8,14 +8,17 @@ import {
 } from '@ant-design/icons';
 import { connect, Dispatch } from 'umi';
 import { ConnectState } from '@/models/connect';
-import { Article } from '@/interfaces/article';
-import { Category } from '@/interfaces/category';
-import { Tag as TagType } from '@/interfaces/tag';
+import { Article } from '@/interfaces/Article';
+import { Category } from '@/interfaces/Category';
+import { Tag as TagType } from '@/interfaces/Tag';
 
 import { history } from '@@/core/history';
 import ArticleListContent from '../components/ArticleListContent';
 import StandardFormRow from '../components/StandardFormRow';
+
 import styles from './style.less';
+
+const { CheckableTag } = Tag;
 
 const { confirm } = Modal;
 const { Option } = Select;
@@ -31,7 +34,9 @@ interface ListSearchArticlesProps {
 }
 
 const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
-  const { dispatch, articleList, loading, deleting } = props;
+  const { dispatch, articleList, loading, deleting, categoryList, tagList } = props;
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [form] = Form.useForm();
 
   const goEditPage = (articleId: string | number) => {
@@ -99,6 +104,20 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
     },
   };
 
+  const handleTagChange = (tag: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tag]
+      : selectedTags.filter((t) => t !== tag);
+    setSelectedTags(nextSelectedTags);
+  };
+
+  const handleCategoryChange = (category: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedCategories, category]
+      : selectedCategories.filter((t) => t !== category);
+    setSelectedCategories(nextSelectedTags);
+  };
+
   useEffect(() => {
     dispatch({
       type: 'article/fetchAllArticle',
@@ -148,16 +167,40 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           }}
         >
           <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
-            <FormItem>a</FormItem>
+            <FormItem>
+              {categoryList.map((category) => (
+                <CheckableTag
+                  key={category.categoryId}
+                  checked={selectedCategories.indexOf(category.categoryName) > -1}
+                  onChange={(checked) => handleCategoryChange(category.categoryName, checked)}
+                >
+                  {category.categoryName}
+                </CheckableTag>
+              ))}
+
+              {/* <Button type="primary" shape="round" icon={<DownloadOutlined />}>
+                Download
+              </Button> */}
+            </FormItem>
           </StandardFormRow>
           <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
-            <FormItem>a</FormItem>
+            <FormItem>
+              {tagList.map((tag) => (
+                <CheckableTag
+                  key={tag.tagId}
+                  checked={selectedTags.indexOf(tag.tagName) > -1}
+                  onChange={(checked) => handleTagChange(tag.tagName, checked)}
+                >
+                  {tag.tagName}
+                </CheckableTag>
+              ))}
+            </FormItem>
           </StandardFormRow>
           <StandardFormRow title="其它选项" grid last>
             <Row gutter={16}>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
                 <FormItem {...formItemLayout} label="文章状态">
-                  <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
+                  <Select placeholder="不限" style={{ minWidth: 120, width: '100%' }}>
                     <Option value="1">已发布</Option>
                     <Option value="0">未发布</Option>
                   </Select>
@@ -165,7 +208,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
               </Col>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
                 <FormItem {...formItemLayout} label="是否可评论">
-                  <Select placeholder="不限" style={{ minWidth: 100, width: '100%' }}>
+                  <Select placeholder="不限" style={{ minWidth: 120, width: '100%' }}>
                     <Option value="1">可评论</Option>
                     <Option value="0">不可评论</Option>
                   </Select>
@@ -173,21 +216,6 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
               </Col>
             </Row>
           </StandardFormRow>
-          {/* 预留
-            <StandardFormRow title="作者" grid>
-            <FormItem name="owner" noStyle>
-              <Select mode="multiple" placeholder="选择标签" style={{minWidth: 200}}>
-                {tagList.map((owner) => (
-                  <Option key={owner.tagId} value={owner.tagId}>
-                    {owner.tagName}
-                  </Option>
-                ))}
-              </Select>
-            </FormItem>
-            <a className={styles.selfTrigger} onClick={setOwner}>
-              只看自己的
-            </a>
-          </StandardFormRow> */}
         </Form>
       </Card>
       <Card

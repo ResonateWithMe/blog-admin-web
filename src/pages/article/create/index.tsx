@@ -5,8 +5,8 @@
  */
 import React, { useEffect } from 'react';
 import { connect } from '@@/plugin-dva/exports';
-import { Article } from '@/interfaces/article';
-import { Category } from '@/interfaces/category';
+import { Article } from '@/interfaces/Article';
+import { Category } from '@/interfaces/Category';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, message } from 'antd';
 import { ConnectState } from '@/models/connect';

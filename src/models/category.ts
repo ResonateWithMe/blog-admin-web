@@ -4,7 +4,7 @@
  * @date 2020/5/16 5:46 下午
  */
 import { Effect, Reducer } from '@@/plugin-dva/connect';
-import { Category } from '@/interfaces/category';
+import { Category } from '@/interfaces/Category';
 import { findCategoryList } from '@/services/category';
 
 export interface CategoryStateType {
