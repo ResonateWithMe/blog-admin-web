@@ -8,19 +8,20 @@ on:
     branches: [ develop ]
 
 jobs:
-  build:
+  build-and-deploy:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x]
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-      - run: yarn install
-      - run: yarn build
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          persist-credentials: false
+
+      - name: Install and Build
+        run: |
+          yarn install
+          yarn build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
