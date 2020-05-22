@@ -58,5 +58,6 @@ export default {
   'menu.tag': '标签管理',
   'menu.comment': '评论管理',
   'menu.links': '友情链接',
+  'menu.system': '系统配置',
   // ---------- New Add End. ----------
 };

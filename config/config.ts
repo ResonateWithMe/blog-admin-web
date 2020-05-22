@@ -72,14 +72,14 @@ export default defineConfig({
             },
             {
               name: 'article.create',
-              icon: 'smile',
+              icon: 'plus',
               path: '/article/create',
               component: './article/create',
             },
             {
               name: 'article',
               path: '/article',
-              icon: 'smile',
+              icon: 'read',
               hideChildrenInMenu: true,
               component: '../layouts/BlankLayout',
               routes: [
@@ -107,26 +107,38 @@ export default defineConfig({
             {
               name: 'category',
               path: '/category',
-              icon: 'smile',
+              icon: 'branches',
               component: './category',
             },
             {
               name: 'tag',
               path: '/tag',
-              icon: 'smile',
+              icon: 'tags',
               component: './tag',
             },
             {
               name: 'comment',
               path: '/comment',
-              icon: 'smile',
+              icon: 'message',
               component: './comment',
             },
             {
               name: 'links',
               path: '/links',
-              icon: 'smile',
+              icon: 'link',
               component: './links',
+            },
+            {
+              name: '个人中心',
+              icon: 'user',
+              path: '/accountcenter',
+              component: './AccountCenter',
+            },
+            {
+              name: '个人设置',
+              icon: 'setting',
+              path: '/accountsettings',
+              component: './AccountSettings',
             },
             {
               component: './404',

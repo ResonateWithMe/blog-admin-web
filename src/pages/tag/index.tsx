@@ -13,12 +13,6 @@ import { findTagList } from '@/services/tag';
 
 const columns: ProColumns<any>[] = [
   {
-    title: '序号',
-    dataIndex: 'index',
-    valueType: 'indexBorder',
-    width: 100,
-  },
-  {
     title: '标签ID',
     dataIndex: 'tagId',
     ellipsis: true,
@@ -29,7 +23,6 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '标签名称',
@@ -43,7 +36,6 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '创建时间',
@@ -111,7 +103,10 @@ export default () => {
             currentPage: params.current,
             pageSize: params.pageSize,
           });
-          return data.data;
+          return {
+            data: data.data.list,
+            total: data.data.totalCount,
+          };
         }}
         rowKey="tagId"
         dateFormatter="string"
