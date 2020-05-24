@@ -15,20 +15,20 @@ const columns: ProColumns<any>[] = [
     title: '序号',
     dataIndex: 'index',
     valueType: 'indexBorder',
-    width: 72,
+    width: 120,
   },
   {
     title: '标题',
     dataIndex: 'linkName',
     copyable: true,
     ellipsis: true,
+    width: 200,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -36,27 +36,25 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'linkUrl',
     copyable: true,
     ellipsis: true,
+    width: 200,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
     title: '链接类型',
     dataIndex: 'linkType',
     copyable: true,
-    ellipsis: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -64,27 +62,25 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'linkDescription',
     copyable: true,
     ellipsis: true,
+    width: 200,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
     title: '链接排序',
     dataIndex: 'linkRank',
     copyable: true,
-    ellipsis: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -150,11 +146,11 @@ export default () => {
             pageSize: params.pageSize,
           });
           return {
-            data: data.data.list,
+            data: data.data.data,
             total: data.data.totalCount,
           };
         }}
-        rowKey="id"
+        rowKey="linkId"
         dateFormatter="string"
         headerTitle="友情链接"
         toolBarRender={() => [

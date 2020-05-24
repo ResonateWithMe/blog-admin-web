@@ -13,23 +13,17 @@ import { Comment } from '@/interfaces/Comment';
 
 const columns: ProColumns<any>[] = [
   {
-    title: '序号',
-    dataIndex: 'index',
-    valueType: 'indexBorder',
-    width: 72,
-  },
-  {
     title: '评论者',
     dataIndex: 'commentator',
     copyable: true,
     ellipsis: true,
+    width: 120,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -37,13 +31,13 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'email',
     copyable: true,
     ellipsis: true,
+    width: 100,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -51,13 +45,13 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'websiteUrl',
     copyable: true,
     ellipsis: true,
+    width: 100,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -85,7 +79,6 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -106,14 +99,12 @@ const columns: ProColumns<any>[] = [
     title: '评论状态',
     dataIndex: 'commentStatus',
     copyable: true,
-    ellipsis: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
     hideInSearch: true,
   },
   {
@@ -183,11 +174,11 @@ export default () => {
             pageSize: params.pageSize,
           });
           return {
-            data: data.data.list,
+            data: data.data.data,
             total: data.totalCount,
           };
         }}
-        rowKey="id"
+        rowKey="articleId"
         dateFormatter="string"
         headerTitle="评论列表"
         toolBarRender={() => [

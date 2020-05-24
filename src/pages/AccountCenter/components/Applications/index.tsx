@@ -11,7 +11,6 @@ import { connect } from 'umi';
 // eslint-disable-next-line import/no-extraneous-dependencies
 // @ts-ignore
 // eslint-disable-next-line import/no-extraneous-dependencies
-import numeral from 'numeral';
 import { ModalState } from '../../model';
 // @ts-ignore
 import stylesApplications from './index.less';
@@ -63,7 +62,7 @@ const Applications: React.FC<Partial<ModalState>> = (props) => {
       </Menu.Item>
     </Menu>
   );
-  const CardInfo: React.FC<{
+  /* const CardInfo: React.FC<{
     activeUser: React.ReactNode;
     newUser: React.ReactNode;
   }> = ({ activeUser, newUser }) => (
@@ -77,7 +76,8 @@ const Applications: React.FC<Partial<ModalState>> = (props) => {
         <p>{newUser}</p>
       </div>
     </div>
-  );
+  ); */
+
   return (
     <List
       rowKey="id"
@@ -106,10 +106,10 @@ const Applications: React.FC<Partial<ModalState>> = (props) => {
           >
             <Card.Meta avatar={<Avatar size="small" src={item.avatar} />} title={item.title} />
             <div className={stylesApplications.cardItemContent}>
-              <CardInfo
+              {/* <CardInfo
                 activeUser={formatWan(item.activeUser)}
                 newUser={numeral(item.newUser).format('0,0')}
-              />
+              /> */}
             </div>
           </Card>
         </List.Item>

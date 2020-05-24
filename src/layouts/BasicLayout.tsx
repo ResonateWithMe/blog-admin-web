@@ -123,6 +123,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   return (
     <ProLayout
       logo={logo}
+      siderWidth={200}
       formatMessage={formatMessage}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">

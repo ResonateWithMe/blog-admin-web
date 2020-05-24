@@ -53,6 +53,8 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       title: '删除提示',
       icon: <ExclamationCircleOutlined />,
       content: '您想要删除这篇文章？',
+      okText: '是',
+      cancelText: '否',
       onOk() {
         dispatch({
           type: 'article/deleteArticle',
@@ -288,7 +290,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 
 export default connect(({ article, category, tag, loading }: ConnectState) => ({
   articleList: article.articleList || [],
-  categoryList: category.categoryList || [],
+  categoryList: category.allCategory || [],
   tagList: tag.tagList || [],
   loading: loading.effects['article/fetchAllArticle'] || false,
   deleting: loading.effects['article/deleteArticle'] || false,

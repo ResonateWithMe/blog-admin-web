@@ -32,7 +32,7 @@ const TagModel: TagModelType = {
       const response = yield call(findTagList, payload);
       yield put({
         type: 'saveTagList',
-        payload: response.data.list,
+        payload: response.data.data,
       });
     },
   },

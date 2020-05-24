@@ -52,7 +52,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
+  title: 'Blog Admin',
   pwa: false,
   iconfontUrl: '',
 } as DefaultSettings;

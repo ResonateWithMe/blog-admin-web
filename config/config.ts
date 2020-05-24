@@ -129,13 +129,13 @@ export default defineConfig({
               component: './links',
             },
             {
-              name: '个人中心',
+              name: 'links',
               icon: 'user',
               path: '/accountcenter',
               component: './AccountCenter',
             },
             {
-              name: '个人设置',
+              name: 'links',
               icon: 'setting',
               path: '/accountsettings',
               component: './AccountSettings',

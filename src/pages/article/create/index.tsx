@@ -60,5 +60,5 @@ const CreatePage: React.FC<CreateProps> = (props) => {
 
 export default connect(({ category, loading }: ConnectState) => ({
   updating: loading.effects['article/updateArticle'],
-  allCategories: category.categoryList,
+  allCategories: category.allCategory,
 }))(CreatePage);

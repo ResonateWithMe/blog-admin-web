@@ -15,7 +15,6 @@ const columns: ProColumns<any>[] = [
   {
     title: '标签ID',
     dataIndex: 'tagId',
-    ellipsis: true,
     rules: [
       {
         required: true,
@@ -104,7 +103,7 @@ export default () => {
             pageSize: params.pageSize,
           });
           return {
-            data: data.data.list,
+            data: data.data.data,
             total: data.data.totalCount,
           };
         }}

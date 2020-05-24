@@ -51,7 +51,7 @@ const ArticleModel: ArticleModelType = {
       const response = yield call(queryArticleList, payload);
       yield put({
         type: 'saveAllArticle',
-        payload: response.data ? response.data.list : [],
+        payload: response.data ? response.data.data : [],
       });
     },
     *fetchArticleDetail({ payload }, { call, put }) {

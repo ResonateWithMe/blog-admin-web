@@ -21,7 +21,6 @@ const columns: ProColumns<any>[] = [
   {
     title: '分类ID',
     dataIndex: 'categoryId',
-    ellipsis: true,
     rules: [
       {
         required: true,
@@ -63,7 +62,6 @@ const columns: ProColumns<any>[] = [
     title: '分类排序',
     dataIndex: 'categoryRank',
     copyable: true,
-    ellipsis: true,
     rules: [
       {
         required: true,
@@ -135,10 +133,14 @@ export default () => {
         columns={columns}
         actionRef={actionRef}
         request={async (params = {}) => {
-          return findCategoryList({
+          const data = await findCategoryList({
             currentPage: params.current,
             pageSize: params.pageSize,
           });
+          return {
+            data: data.data.data,
+            total: data.data.totalCount,
+          };
         }}
         rowKey="categoryId"
         dateFormatter="string"
