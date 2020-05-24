@@ -11,7 +11,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { findCategoryList } from '@/services/category';
 import { Category } from '@/interfaces/Category';
 
-const columns: ProColumns<any>[] = [
+const columns: ProColumns<Category>[] = [
   {
     title: '序号',
     dataIndex: 'index',
@@ -21,6 +21,8 @@ const columns: ProColumns<any>[] = [
   {
     title: '分类ID',
     dataIndex: 'categoryId',
+    hideInForm: true,
+    hideInSearch: true,
     rules: [
       {
         required: true,
@@ -28,12 +30,10 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '分类名称',
     dataIndex: 'categoryName',
-    copyable: true,
     ellipsis: true,
     rules: [
       {
@@ -42,13 +42,12 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '分类图标',
     dataIndex: 'categoryIcon',
-    copyable: true,
     ellipsis: true,
+    hideInSearch: true,
     rules: [
       {
         required: true,
@@ -56,20 +55,18 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '分类排序',
     dataIndex: 'categoryRank',
-    copyable: true,
+    hideInForm: true,
+    hideInSearch: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    width: 200,
-    hideInSearch: true,
   },
   {
     title: '创建时间',
@@ -77,12 +74,13 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'createTime',
     valueType: 'dateTime',
     hideInForm: true,
+    hideInSearch: true,
   },
   {
     title: '操作',
     valueType: 'option',
     render: (text, row, _, action) => [
-      <a href={row.html_url} target="_blank" rel="noopener noreferrer">
+      <a href={row.categoryIcon} target="_blank" rel="noopener noreferrer">
         查看
       </a>,
       <TableDropdown
@@ -99,34 +97,18 @@ const columns: ProColumns<any>[] = [
 export default () => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState(false);
+
+  const addRecord = (params: {}) => {
+    console.log(params);
+  };
+
   return (
     <PageHeaderWrapper>
-      <Drawer width={600} onClose={() => setVisible(false)} visible={visible}>
-        <Button
-          style={{
-            margin: 8,
-          }}
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-        >
-          刷新
-        </Button>
-        <Button
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reset();
-            }
-          }}
-        >
-          重置
-        </Button>
+      <Drawer title="新增" width={600} onClose={() => setVisible(false)} visible={visible}>
         <ProTable<Category>
           columns={columns}
           type="form"
-          onSubmit={(params) => console.log(params)}
+          onSubmit={(params) => addRecord(params)}
         />
       </Drawer>
       <ProTable<Category>
@@ -146,7 +128,7 @@ export default () => {
         dateFormatter="string"
         headerTitle="文章分类列表"
         toolBarRender={() => [
-          <Button key="3" type="primary">
+          <Button key="3" type="primary" onClick={() => setVisible(true)}>
             <PlusOutlined />
             新建
           </Button>,

@@ -108,34 +108,17 @@ const columns: ProColumns<any>[] = [
   },
 ];
 
+const addRecord = (params: {}) => {
+  console.log(params);
+};
+
 export default () => {
   const actionRef = useRef<ActionType>();
   const [visible, setVisible] = useState(false);
   return (
     <PageHeaderWrapper>
-      <Drawer width={600} onClose={() => setVisible(false)} visible={visible}>
-        <Button
-          style={{
-            margin: 8,
-          }}
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-        >
-          刷新
-        </Button>
-        <Button
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reset();
-            }
-          }}
-        >
-          重置
-        </Button>
-        <ProTable<Link> columns={columns} type="form" onSubmit={(params) => console.log(params)} />
+      <Drawer title="新增" width={600} onClose={() => setVisible(false)} visible={visible}>
+        <ProTable<Link> columns={columns} type="form" onSubmit={addRecord} />
       </Drawer>
       <ProTable<Link>
         columns={columns}
@@ -154,7 +137,7 @@ export default () => {
         dateFormatter="string"
         headerTitle="友情链接"
         toolBarRender={() => [
-          <Button key="3" type="primary">
+          <Button key="3" type="primary" onClick={() => setVisible(true)}>
             <PlusOutlined />
             新建
           </Button>,

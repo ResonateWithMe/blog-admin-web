@@ -37,6 +37,8 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
   const { dispatch, articleList, loading, deleting, categoryList, tagList } = props;
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [articleStatus, setArticleStatus] = useState<number>();
+  const [enableComment, setEnableComment] = useState<number>();
   const [form] = Form.useForm();
 
   const goEditPage = (articleId: string | number) => {
@@ -120,6 +122,28 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
     setSelectedCategories(nextSelectedTags);
   };
 
+  const handleArticleStateChange = (value: number) => {
+    setArticleStatus(value);
+  };
+
+  const enableCommentChange = (value: number) => {
+    setEnableComment(value);
+  };
+
+  useEffect(() => {
+    dispatch({
+      type: 'article/fetchAllArticle',
+      payload: {
+        currentPage: 1,
+        pageSize: 10,
+        articleCategories: selectedCategories,
+        articleTags: selectedTags,
+        articleStatus,
+        enableComment,
+      },
+    });
+  }, [selectedTags, selectedCategories, articleStatus, enableComment]);
+
   useEffect(() => {
     dispatch({
       type: 'article/fetchAllArticle',
@@ -133,10 +157,6 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
     });
     dispatch({
       type: 'tag/fetchAllTag',
-      payload: {
-        currentPage: 1,
-        pageSize: 10,
-      },
     });
   }, []);
 
@@ -202,7 +222,11 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
             <Row gutter={16}>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
                 <FormItem {...formItemLayout} label="文章状态">
-                  <Select placeholder="不限" style={{ minWidth: 120, width: '100%' }}>
+                  <Select
+                    placeholder="不限"
+                    style={{ minWidth: 120, width: '100%' }}
+                    onChange={handleArticleStateChange}
+                  >
                     <Option value="1">已发布</Option>
                     <Option value="0">未发布</Option>
                   </Select>
@@ -210,7 +234,11 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
               </Col>
               <Col xl={8} lg={10} md={12} sm={24} xs={24}>
                 <FormItem {...formItemLayout} label="是否可评论">
-                  <Select placeholder="不限" style={{ minWidth: 120, width: '100%' }}>
+                  <Select
+                    placeholder="不限"
+                    style={{ minWidth: 120, width: '100%' }}
+                    onChange={enableCommentChange}
+                  >
                     <Option value="1">可评论</Option>
                     <Option value="0">不可评论</Option>
                   </Select>
@@ -227,14 +255,14 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       >
         <List<Article>
           size="large"
-          loading={articleList.length === 0 ? loading : false}
+          loading={loading}
           rowKey="id"
           itemLayout="vertical"
           pagination={{
             onChange: (page) => {
               console.log(page);
             },
-            pageSize: 3,
+            pageSize: 10,
           }}
           dataSource={articleList}
           renderItem={(item) => (

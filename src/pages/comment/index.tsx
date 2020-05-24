@@ -3,9 +3,7 @@
  * @author ShiLin
  * @date 2020/5/15 11:30
  */
-import React, { useRef, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Drawer } from 'antd';
+import React, { useRef } from 'react';
 import ProTable, { ProColumns, TableDropdown, ActionType } from '@ant-design/pro-table';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { findCommentList } from '@/services/comment';
@@ -124,7 +122,7 @@ const columns: ProColumns<any>[] = [
       <TableDropdown
         onSelect={() => action.reload()}
         menus={[
-          { key: 'copy', name: '复制' },
+          { key: 'approved', name: '审核通过' },
           { key: 'delete', name: '删除' },
         ]}
       />,
@@ -134,37 +132,8 @@ const columns: ProColumns<any>[] = [
 
 export default () => {
   const actionRef = useRef<ActionType>();
-  const [visible, setVisible] = useState(false);
   return (
     <PageHeaderWrapper>
-      <Drawer width={600} onClose={() => setVisible(false)} visible={visible}>
-        <Button
-          style={{
-            margin: 8,
-          }}
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }}
-        >
-          刷新
-        </Button>
-        <Button
-          onClick={() => {
-            if (actionRef.current) {
-              actionRef.current.reset();
-            }
-          }}
-        >
-          重置
-        </Button>
-        <ProTable<Comment>
-          columns={columns}
-          type="form"
-          onSubmit={(params) => console.log(params)}
-        />
-      </Drawer>
       <ProTable<Comment>
         columns={columns}
         actionRef={actionRef}
@@ -181,12 +150,6 @@ export default () => {
         rowKey="articleId"
         dateFormatter="string"
         headerTitle="评论列表"
-        toolBarRender={() => [
-          <Button key="3" type="primary">
-            <PlusOutlined />
-            新建
-          </Button>,
-        ]}
       />
     </PageHeaderWrapper>
   );

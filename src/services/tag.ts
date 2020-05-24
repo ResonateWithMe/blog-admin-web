@@ -13,3 +13,9 @@ export async function findTagList(params: PaginationParams): Promise<Result<any>
     params,
   });
 }
+
+export async function findAllTag(): Promise<Result<any>> {
+  return request('/api/tag/all', {
+    method: 'GET',
+  });
+}
