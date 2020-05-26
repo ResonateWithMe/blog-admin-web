@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Card, Col, Form, List, Row, Tag, Select, Modal } from 'antd';
 import {
-  MessageOutlined,
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { connect, Dispatch } from 'umi';
 import { ConnectState } from '@/models/connect';
@@ -13,6 +13,7 @@ import { Category } from '@/interfaces/Category';
 import { Tag as TagType } from '@/interfaces/Tag';
 
 import { history } from '@@/core/history';
+import { PagingData } from '@/interfaces/PagingData';
 import ArticleListContent from '../components/ArticleListContent';
 import StandardFormRow from '../components/StandardFormRow';
 
@@ -26,7 +27,7 @@ const FormItem = Form.Item;
 
 interface ListSearchArticlesProps {
   dispatch: Dispatch;
-  articleList: Article[];
+  articleList: PagingData<Article[]> | undefined;
   categoryList: Category[];
   tagList: TagType[];
   loading: boolean;
@@ -77,7 +78,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       case 'message':
         return (
           <span>
-            <MessageOutlined style={{ marginRight: 8 }} />
+            <EyeOutlined style={{ marginRight: 8 }} />
             {text}
           </span>
         );
@@ -132,10 +133,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'article/fetchAllArticle',
+      type: 'article/fetchArticleList',
       payload: {
         currentPage: 1,
-        pageSize: 10,
+        pageSize: 5,
         articleCategories: selectedCategories,
         articleTags: selectedTags,
         articleStatus,
@@ -146,10 +147,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'article/fetchAllArticle',
+      type: 'article/fetchArticleList',
       payload: {
         currentPage: 1,
-        pageSize: 10,
+        pageSize: 5,
       },
     });
     dispatch({
@@ -162,10 +163,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'article/fetchAllArticle',
+      type: 'article/fetchArticleList',
       payload: {
         currentPage: 1,
-        pageSize: 10,
+        pageSize: 5,
       },
     });
   }, [deleting]);
@@ -179,14 +180,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           initialValues={{
             owner: ['wjh', 'zxx'],
           }}
-          onValuesChange={() => {
-            /* dispatch({
-              type: 'articleAndlistAndListSearchArticles/fetch',
-              payload: {
-                count: 8,
-              },
-            }); */
-          }}
+          onValuesChange={() => {}}
         >
           <StandardFormRow title="所属类目" block style={{ paddingBottom: 11 }}>
             <FormItem>
@@ -199,10 +193,6 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                   {category.categoryName}
                 </CheckableTag>
               ))}
-
-              {/* <Button type="primary" shape="round" icon={<DownloadOutlined />}>
-                Download
-              </Button> */}
             </FormItem>
           </StandardFormRow>
           <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
@@ -260,11 +250,19 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           itemLayout="vertical"
           pagination={{
             onChange: (page) => {
-              console.log(page);
+              dispatch({
+                type: 'article/fetchArticleList',
+                payload: {
+                  currentPage: page,
+                  pageSize: 10,
+                },
+              });
             },
-            pageSize: 10,
+            current: articleList?.currentPage || 1,
+            pageSize: articleList?.pageSize || 5,
+            total: articleList?.totalCount,
           }}
-          dataSource={articleList}
+          dataSource={articleList?.data}
           renderItem={(item) => (
             <List.Item
               key={item.key}
@@ -317,7 +315,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 };
 
 export default connect(({ article, category, tag, loading }: ConnectState) => ({
-  articleList: article.articleList || [],
+  articleList: article.articleList,
   categoryList: category.allCategory || [],
   tagList: tag.tagList || [],
   loading: loading.effects['article/fetchAllArticle'] || false,

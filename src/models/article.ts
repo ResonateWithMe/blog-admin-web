@@ -14,9 +14,10 @@ import {
   deleteArticle,
 } from '@/services/article';
 import { message, notification } from 'antd';
+import { PagingData } from '@/interfaces/PagingData';
 
 export interface ArticleStateType {
-  articleList?: Article[];
+  articleList?: PagingData<Article[]>;
   articleDetail?: Article;
   detailSpinning?: boolean;
 }
@@ -25,7 +26,7 @@ export interface ArticleModelType {
   namespace: 'article';
   state: ArticleStateType;
   effects: {
-    fetchAllArticle: Effect;
+    fetchArticleList: Effect;
     fetchArticleDetail: Effect;
     updateArticle: Effect;
     createArticle: Effect;
@@ -41,17 +42,17 @@ const ArticleModel: ArticleModelType = {
   namespace: 'article',
 
   state: {
-    articleList: [],
+    articleList: undefined,
     articleDetail: undefined,
     detailSpinning: false,
   },
 
   effects: {
-    *fetchAllArticle({ payload }, { call, put }) {
+    *fetchArticleList({ payload }, { call, put }) {
       const response = yield call(queryArticleList, payload);
       yield put({
         type: 'saveAllArticle',
-        payload: response.data.data,
+        payload: response.data,
       });
     },
     *fetchArticleDetail({ payload }, { call, put }) {
