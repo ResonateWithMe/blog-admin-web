@@ -254,7 +254,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                 type: 'article/fetchArticleList',
                 payload: {
                   currentPage: page,
-                  pageSize: 10,
+                  pageSize: 5,
                 },
               });
             },
@@ -299,9 +299,10 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                 }
                 description={
                   <span>
-                    {item.articleTags.map((tag) => {
-                      return <Tag key={tag.tagId}>{tag.tagName}</Tag>;
-                    })}
+                    {item.articleTags &&
+                      item.articleTags.split(',').map((tag) => {
+                        return <Tag key={tag}>{tag}</Tag>;
+                      })}
                   </span>
                 }
               />
