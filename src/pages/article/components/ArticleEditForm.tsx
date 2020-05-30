@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Button, Select, Upload, Card, Radio } from 'antd';
+import { Form, Button, Select, Upload, Card, Switch } from 'antd';
 import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interfaces/Category';
 import { UploadProps } from 'antd/es/upload/interface';
@@ -173,23 +173,18 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
       <Form.Item
         label="状态"
         name="articleStatus"
+        valuePropName="checked"
         rules={[{ required: false, message: '请选择文章状态!' }]}
       >
-        <Radio.Group name="articleStatus">
-          <Radio value={1}>发布</Radio>
-          <Radio value={0}>草稿</Radio>
-        </Radio.Group>
-        {/* <Switch checkedChildren="发布" unCheckedChildren="草稿" /> */}
+        <Switch defaultChecked checkedChildren="发布" unCheckedChildren="草稿" />
       </Form.Item>
       <Form.Item
         label="评论"
         name="enableComment"
+        valuePropName="checked"
         rules={[{ required: false, message: '请选择评论开启状态!' }]}
       >
-        <Radio.Group name="enableComment">
-          <Radio value={1}>开启</Radio>
-          <Radio value={0}>关闭</Radio>
-        </Radio.Group>
+        <Switch defaultChecked checkedChildren="开启" unCheckedChildren="关闭" />
       </Form.Item>
       <Form.Item
         label="内容"

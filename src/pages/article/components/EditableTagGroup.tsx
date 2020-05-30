@@ -4,7 +4,6 @@
  * @date 2020/5/6 12:41
  */
 import { Tag, Tooltip } from 'antd';
-import { TweenOneGroup } from 'rc-tween-one';
 import { PlusOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import InputRef from './InputRef';
@@ -58,7 +57,11 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
     setInputValue(e.target.value);
   };
 
-  const handleInputConfirm = () => {
+  const handleEditInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+    setEditInputValue(e.target.value);
+  };
+
+  const handleCreateInputConfirm = () => {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       setTags([...tags, inputValue]);
     }
@@ -66,90 +69,105 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
     setInputValue('');
   };
 
-  const handleEditInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
-    setEditInputValue(e.target.value);
-  };
-
   const handleEditInputConfirm = () => {
     const newTags = [...tags];
-    newTags[editInputIndex] = editInputValue;
-    setTags(newTags);
+    const target = newTags[editInputIndex];
+    if (target) {
+      newTags[editInputIndex] = editInputValue;
+      setTags(newTags);
+    }
     setEditInputIndex(-1);
     setInputValue('');
   };
 
-  useEffect(() => {
-    // console.log(input);
-    // console.log(editInput);
-  }, []);
+  const handleCreateSelect = (value: string) => {
+    setInputValue(value);
+    if (value && tags.indexOf(value) === -1) {
+      setTags([...tags, value]);
+    }
+    setInputVisible(false);
+    setInputValue('');
+  };
+
+  const handleEditSelect = (value: string, index: number) => {
+    setEditInputValue(value);
+    const newTags = [...tags];
+    const target = newTags[editInputIndex];
+    if (target) {
+      newTags[index] = value;
+      setTags(newTags);
+    }
+    setEditInputIndex(-1);
+    setInputValue('');
+  };
+
+  useEffect(() => {}, []);
 
   return (
-    <div>
-      <TweenOneGroup>
-        {tags.map((tag, index) => {
-          if (editInputIndex === index) {
-            return (
-              <InputRef
-                key={tag}
-                isFocus={editInputFocus}
-                value={editInputValue}
-                onChange={handleEditInputChange}
-                onBlur={handleEditInputConfirm}
-                onPressEnter={handleEditInputConfirm}
-              />
-            );
-          }
-
-          const isLongTag = tag.length > 20;
-
-          const tagElem = (
-            <Tag
-              color={colors[index]}
-              className="edit-tag"
+    <>
+      {tags.map((tag, index) => {
+        if (editInputIndex === index) {
+          return (
+            <InputRef
               key={tag}
-              closable
-              onClose={() => handleClose(tag)}
-            >
-              <span
-                onDoubleClick={(e) => {
-                  setEditInputIndex(index);
-                  setEditInputValue(tag);
-                  // hack 引用，动态关联不生效
-                  setEditInputFocus(true);
-                  // console.log(editInput)
-                  // editInput.current.focus();
-                  e.preventDefault();
-                }}
-              >
-                {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-              </span>
-            </Tag>
+              isFocus={editInputFocus}
+              value={editInputValue}
+              onChange={handleEditInputChange}
+              onSelect={(value) => handleEditSelect(value, editInputIndex)}
+              onBlur={handleEditInputConfirm}
+              onPressEnter={handleEditInputConfirm}
+            />
           );
-          return isLongTag ? (
-            <Tooltip title={tag} key={tag}>
-              {tagElem}
-            </Tooltip>
-          ) : (
-            tagElem
-          );
-        })}
+        }
 
-        {inputVisible && (
-          <InputRef
-            isFocus={inputFocus}
-            value={inputValue}
-            onChange={handleInputChange}
-            onBlur={handleInputConfirm}
-            onPressEnter={handleInputConfirm}
-          />
-        )}
-        {!inputVisible && (
-          <Tag className="site-tag-plus" onClick={showInput}>
-            <PlusOutlined /> New Tag
+        const isLongTag = tag.length > 20;
+
+        const tagElem = (
+          <Tag
+            color={colors[index]}
+            className="edit-tag"
+            key={tag}
+            closable
+            onClose={() => handleClose(tag)}
+          >
+            <span
+              onDoubleClick={(e) => {
+                e.preventDefault();
+                setEditInputIndex(index);
+                setEditInputValue(tag);
+                // hack: 引用，动态关联不生效
+                setEditInputFocus(true);
+              }}
+            >
+              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+            </span>
           </Tag>
-        )}
-      </TweenOneGroup>
-    </div>
+        );
+        return isLongTag ? (
+          <Tooltip title={tag} key={tag}>
+            {tagElem}
+          </Tooltip>
+        ) : (
+          tagElem
+        );
+      })}
+
+      {inputVisible && (
+        <InputRef
+          isFocus={inputFocus}
+          value={inputValue}
+          onChange={handleInputChange}
+          onSelect={handleCreateSelect}
+          onBlur={handleCreateInputConfirm}
+          onPressEnter={handleCreateInputConfirm}
+        />
+      )}
+      {!inputVisible && (
+        <Tag className="site-tag-plus" onClick={showInput}>
+          <PlusOutlined /> New Tag
+        </Tag>
+      )}
+    </>
   );
 };
 
