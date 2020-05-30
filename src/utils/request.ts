@@ -54,4 +54,17 @@ const request = extend({
   prefix: process.env.NODE_ENV === 'production' ? 'http://122.51.213.87:8081/' : '',
 });
 
+request.interceptors.request.use((url, options) => {
+  const token = window.localStorage.getItem('token') || '';
+  return {
+    url,
+    options: {
+      ...options,
+      headers: {
+        token,
+      },
+    },
+  };
+});
+
 export default request;
