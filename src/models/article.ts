@@ -15,10 +15,11 @@ import {
 } from '@/services/article';
 import { message, notification } from 'antd';
 import { PagingData } from '@/interfaces/PagingData';
+import { ArticleDetail } from '@/interfaces/ArticleDetail';
 
 export interface ArticleStateType {
   articleList?: PagingData<Article[]>;
-  articleDetail?: Article;
+  articleDetail?: ArticleDetail;
   detailSpinning?: boolean;
 }
 

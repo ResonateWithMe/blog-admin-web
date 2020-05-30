@@ -6,9 +6,9 @@ import { Category } from '@/interfaces/Category';
 import { connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { Dispatch } from '@@/plugin-dva/connect';
-import { Article } from '@/interfaces/Article';
 import ArticleEditForm from '@/pages/article/components/ArticleEditForm';
 import { Store } from 'antd/es/form/interface';
+import { ArticleDetail } from '@/interfaces/ArticleDetail';
 
 interface Query {
   id: string;
@@ -26,7 +26,7 @@ interface Location {
 
 interface EditProps {
   location: Location;
-  articleDetail: Article | undefined;
+  articleDetail: ArticleDetail | undefined;
   allCategories: Category[] | undefined;
   dispatch: Dispatch;
   loading?: boolean;

@@ -12,12 +12,12 @@ import { UploadOutlined } from '@ant-design/icons/lib';
 import { Category } from '@/interfaces/Category';
 import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
-import { Article } from '@/interfaces/Article';
 import { Store } from 'antd/es/form/interface';
+import { ArticleDetail } from '@/interfaces/ArticleDetail';
 import EditableTagGroup from './EditableTagGroup';
 
 interface EditFormProps {
-  articleDetail?: Article | undefined;
+  articleDetail?: ArticleDetail | undefined;
   allCategories?: Category[] | undefined;
   loading?: boolean;
   updating?: boolean;

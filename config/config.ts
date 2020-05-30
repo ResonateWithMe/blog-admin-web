@@ -128,7 +128,7 @@ export default defineConfig({
               icon: 'link',
               component: './links',
             },
-            {
+            /*{
               name: 'links',
               icon: 'user',
               path: '/accountcenter',
@@ -139,7 +139,7 @@ export default defineConfig({
               icon: 'setting',
               path: '/accountsettings',
               component: './AccountSettings',
-            },
+            },*/
             {
               component: './404',
             },

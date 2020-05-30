@@ -2,6 +2,7 @@ import request from 'umi-request';
 import { Result } from '@/interfaces/Result';
 import { Article } from '@/interfaces/Article';
 import { PaginationParams } from '@/interfaces/PaginationParams';
+import { ArticleDetail } from '@/interfaces/ArticleDetail';
 
 export async function queryArticleList(params?: PaginationParams) {
   return request('/api/article/list', {
@@ -9,7 +10,7 @@ export async function queryArticleList(params?: PaginationParams) {
   });
 }
 
-export async function queryArticleDetail(articleId: string): Promise<Result<Article>> {
+export async function queryArticleDetail(articleId: string): Promise<Result<ArticleDetail>> {
   return request(`/api/article/detail/${articleId}`);
 }
 
