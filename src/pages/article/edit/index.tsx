@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import 'react-markdown-editor-lite/lib/index.css';
 import { Spin, Card, message } from 'antd';
-import { Category } from '@/interfaces/Category';
 import { connect } from 'umi';
 import { ConnectState } from '@/models/connect';
 import { Dispatch } from '@@/plugin-dva/connect';
-import ArticleEditForm from '@/pages/article/components/ArticleEditForm';
+import ArticleEditForm from '@/pages/article/components/ArticleForm';
 import { Store } from 'antd/es/form/interface';
 import { ArticleDetail } from '@/interfaces/ArticleDetail';
 
@@ -27,14 +26,13 @@ interface Location {
 interface EditProps {
   location: Location;
   articleDetail: ArticleDetail | undefined;
-  allCategories: Category[] | undefined;
   dispatch: Dispatch;
   loading?: boolean;
   updating?: boolean;
 }
 
 const Edit: React.FC<EditProps> = (props) => {
-  const { location, articleDetail, allCategories, dispatch, loading, updating } = props;
+  const { location, articleDetail, dispatch, loading, updating } = props;
 
   const onFinish = (values: Store) => {
     try {
@@ -52,9 +50,6 @@ const Edit: React.FC<EditProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'category/fetchAllCategory',
-    });
-    dispatch({
       type: 'article/fetchArticleDetail',
       payload: location.query.id,
     });
@@ -66,8 +61,7 @@ const Edit: React.FC<EditProps> = (props) => {
         <Spin tip="Loading..." spinning={loading}>
           <ArticleEditForm
             articleDetail={articleDetail}
-            allCategories={allCategories}
-            updating={updating}
+            submitting={updating}
             onFinish={onFinish}
           />
         </Spin>
@@ -76,9 +70,8 @@ const Edit: React.FC<EditProps> = (props) => {
   );
 };
 
-export default connect(({ article, category, loading }: ConnectState) => ({
+export default connect(({ article, loading }: ConnectState) => ({
   articleDetail: article.articleDetail,
-  allCategories: category.allCategory,
   loading: loading.effects['article/fetchArticleDetail'],
   updating: loading.effects['article/updateArticle'],
 }))(Edit);

@@ -29,13 +29,13 @@ interface ListSearchArticlesProps {
   dispatch: Dispatch;
   articleList: PagingData<Article[]> | undefined;
   categoryList: Category[];
-  tagList: TagType[];
+  allTag: TagType[];
   loading: boolean;
   deleting: boolean;
 }
 
 const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
-  const { dispatch, articleList, loading, deleting, categoryList, tagList } = props;
+  const { dispatch, articleList, loading, deleting, categoryList, allTag } = props;
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [articleStatus, setArticleStatus] = useState<number>();
@@ -197,7 +197,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
           </StandardFormRow>
           <StandardFormRow title="所属标签" block style={{ paddingBottom: 11 }}>
             <FormItem>
-              {tagList.map((tag) => (
+              {allTag.map((tag) => (
                 <CheckableTag
                   key={tag.tagId}
                   checked={selectedTags.indexOf(tag.tagName) > -1}
@@ -283,11 +283,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
               ]}
               extra={
                 <div className={styles.listItemExtra}>
-                  <img
-                    src="https://gss0.bdstatic.com/70cFfyinKgQIm2_p8IuM_a/daf/pic/item/34fae6cd7b899e5195d5334f4da7d933c8950d15.jpg"
-                    width="200"
-                    alt=""
-                  />
+                  <img src={item.articleCoverImage} width="200" alt="" />
                 </div>
               }
             >
@@ -318,7 +314,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
 export default connect(({ article, category, tag, loading }: ConnectState) => ({
   articleList: article.articleList,
   categoryList: category.allCategory || [],
-  tagList: tag.tagList || [],
+  allTag: tag.allTag || [],
   loading: loading.effects['article/fetchAllArticle'] || false,
   deleting: loading.effects['article/deleteArticle'] || false,
 }))(ListSearchArticles);

@@ -77,7 +77,7 @@ const ArticleModel: ArticleModelType = {
     *createArticle({ payload }, { call }) {
       const response = yield call(createArticle, payload);
       if (response.code !== 200) {
-        message.error('新建文章失败');
+        message.error(response.message || '新建文章失败');
         return;
       }
       notification.success({

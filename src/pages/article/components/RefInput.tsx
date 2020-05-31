@@ -1,5 +1,5 @@
 /**
- * @description InputRef
+ * @description RefInput 弃用
  * @author ShiLin
  * @date 2020/5/6 16:22
  */
@@ -20,7 +20,6 @@ interface InputEvent {
 
 interface InputRefProps {
   value: string;
-  isFocus: boolean;
   tagList: Tag[];
   loading: boolean;
   dispatch: Dispatch;
@@ -30,8 +29,8 @@ interface InputRefProps {
   onPressEnter: () => void;
 }
 
-const InputRef: React.FC<InputRefProps> = (props) => {
-  const { value, isFocus, onChange, onSelect, onBlur, onPressEnter, tagList, dispatch } = props;
+const RefInput: React.FC<InputRefProps> = (props) => {
+  const { value, onChange, onSelect, onBlur, onPressEnter, tagList, dispatch } = props;
   const [options, setOptions] = useState<{ value: string }[]>([]);
   const input = useRef<Input>(null);
 
@@ -40,12 +39,6 @@ const InputRef: React.FC<InputRefProps> = (props) => {
     const newValue = original.filter((item) => item.value.indexOf(searchText) !== -1);
     setOptions(newValue);
   };
-
-  useEffect(() => {
-    if (input.current) {
-      input.current.focus();
-    }
-  }, [isFocus]);
 
   useEffect(() => {
     dispatch({
@@ -59,7 +52,7 @@ const InputRef: React.FC<InputRefProps> = (props) => {
 
   return (
     <AutoComplete
-      style={{ width: 200 }}
+      style={{ width: 200, marginTop: 10 }}
       onSelect={onSelect}
       onSearch={handleSearch}
       value={value}
@@ -85,4 +78,4 @@ const InputRef: React.FC<InputRefProps> = (props) => {
 export default connect(({ tag, loading }: ConnectState) => ({
   tagList: tag.tagList || [],
   loading: loading.effects['tag/fetchAllTag'] || false,
-}))(InputRef);
+}))(RefInput);

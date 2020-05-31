@@ -35,7 +35,7 @@ const TagModel: TagModelType = {
     *fetchAllTag({ payload }, { call, put }) {
       const response = yield call(findAllTag, payload);
       yield put({
-        type: 'saveTagList',
+        type: 'saveAllTag',
         payload: response.data,
       });
     },

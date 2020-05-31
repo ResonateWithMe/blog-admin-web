@@ -1,12 +1,12 @@
 /**
- * @description EditableTagGroup
+ * @description EditableTagGroup 弃用
  * @author ShiLin
  * @date 2020/5/6 12:41
  */
-import { Tag, Tooltip } from 'antd';
+import { message, Tag, Tooltip } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import React, { useEffect, useState } from 'react';
-import InputRef from './InputRef';
+import React, { useState } from 'react';
+import InputRef from './RefInput';
 import './styles/EditableTagGroup.less';
 
 interface EditableTagGroupProps {
@@ -38,19 +38,14 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
   const [inputValue, setInputValue] = useState('');
   const [editInputIndex, setEditInputIndex] = useState(-1);
   const [editInputValue, setEditInputValue] = useState('');
-  const [inputFocus, setInputFocus] = useState<boolean>(false);
-  const [editInputFocus, setEditInputFocus] = useState<boolean>(false);
 
   const handleClose = (removedTag: string) => {
     const tagsC = tags.filter((tag) => tag !== removedTag);
-    // console.log(tagsC);
     setTags(tagsC);
   };
 
   const showInput = () => {
     setInputVisible(true);
-    setInputFocus(true);
-    // input.current.focus();
   };
 
   const handleInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
@@ -64,9 +59,11 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
   const handleCreateInputConfirm = () => {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       setTags([...tags, inputValue]);
+      setInputVisible(false);
+      setInputValue('');
+    } else {
+      message.error('已存在此标签');
     }
-    setInputVisible(false);
-    setInputValue('');
   };
 
   const handleEditInputConfirm = () => {
@@ -101,16 +98,13 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
     setInputValue('');
   };
 
-  useEffect(() => {}, []);
-
   return (
-    <>
+    <div style={{ marginTop: -10 }}>
       {tags.map((tag, index) => {
         if (editInputIndex === index) {
           return (
             <InputRef
               key={tag}
-              isFocus={editInputFocus}
               value={editInputValue}
               onChange={handleEditInputChange}
               onSelect={(value) => handleEditSelect(value, editInputIndex)}
@@ -122,9 +116,11 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
 
         const isLongTag = tag.length > 20;
 
+        const random = Math.floor(Math.random() * colors.length);
+
         const tagElem = (
           <Tag
-            color={colors[index]}
+            color={colors[random]}
             className="edit-tag"
             key={tag}
             closable
@@ -135,11 +131,9 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
                 e.preventDefault();
                 setEditInputIndex(index);
                 setEditInputValue(tag);
-                // hack: 引用，动态关联不生效
-                setEditInputFocus(true);
               }}
             >
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+              #{isLongTag ? `${tag.slice(0, 20)}...` : tag}
             </span>
           </Tag>
         );
@@ -154,7 +148,6 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
 
       {inputVisible && (
         <InputRef
-          isFocus={inputFocus}
           value={inputValue}
           onChange={handleInputChange}
           onSelect={handleCreateSelect}
@@ -164,10 +157,10 @@ const EditableTagGroup: React.FC<EditableTagGroupProps> = (props) => {
       )}
       {!inputVisible && (
         <Tag className="site-tag-plus" onClick={showInput}>
-          <PlusOutlined /> New Tag
+          <PlusOutlined /> 新标签
         </Tag>
       )}
-    </>
+    </div>
   );
 };
 

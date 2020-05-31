@@ -6,24 +6,21 @@
 import React, { useEffect } from 'react';
 import { connect } from '@@/plugin-dva/exports';
 import { Article } from '@/interfaces/Article';
-import { Category } from '@/interfaces/Category';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { Card, message } from 'antd';
 import { ConnectState } from '@/models/connect';
 import { Store } from 'antd/es/form/interface';
 import { Dispatch } from 'umi';
-import ArticleEditForm from '../components/ArticleEditForm';
+import ArticleEditForm from '../components/ArticleForm';
 
 interface CreateProps {
   articleDetail?: Article | undefined;
-  allCategories?: Category[] | undefined;
   dispatch: Dispatch;
-  loading?: boolean;
-  updating?: boolean;
+  creating?: boolean;
 }
 
 const CreatePage: React.FC<CreateProps> = (props) => {
-  const { dispatch, updating, allCategories } = props;
+  const { dispatch, creating } = props;
 
   const onFinish = (values: Store) => {
     try {
@@ -38,27 +35,17 @@ const CreatePage: React.FC<CreateProps> = (props) => {
     }
   };
 
-  useEffect(() => {
-    dispatch({
-      type: 'category/fetchAllCategory',
-    });
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <PageHeaderWrapper>
       <Card>
-        <ArticleEditForm
-          allCategories={allCategories}
-          updating={updating}
-          onFinish={onFinish}
-          submitTitle="新建文章"
-        />
+        <ArticleEditForm submitting={creating} onFinish={onFinish} submitTitle="新建文章" />
       </Card>
     </PageHeaderWrapper>
   );
 };
 
-export default connect(({ category, loading }: ConnectState) => ({
-  updating: loading.effects['article/updateArticle'],
-  allCategories: category.allCategory,
+export default connect(({ loading }: ConnectState) => ({
+  creating: loading.effects['article/createArticle'],
 }))(CreatePage);

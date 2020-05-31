@@ -1,5 +1,5 @@
 /**
- * @description ArticleEditForm
+ * @description ArticleForm
  * @author ShiLin
  * @date 2020/5/14 17:40
  */
@@ -7,20 +7,26 @@ import React, { useEffect, useState } from 'react';
 import MarkdownIt from 'markdown-it';
 import MdEditor from 'react-markdown-editor-lite';
 import 'react-markdown-editor-lite/lib/index.css';
-import { Form, Button, Select, Upload, Card, Switch } from 'antd';
-import { UploadOutlined } from '@ant-design/icons/lib';
+import { Form, Button, Select, Switch, Tag } from 'antd';
 import { Category } from '@/interfaces/Category';
-import { UploadProps } from 'antd/es/upload/interface';
 import TextArea from 'antd/es/input/TextArea';
 import { Store } from 'antd/es/form/interface';
 import { ArticleDetail } from '@/interfaces/ArticleDetail';
-import EditableTagGroup from './EditableTagGroup';
+import { connect } from '@@/plugin-dva/exports';
+import { ConnectState } from '@/models/connect';
+import { Tag as TagInterface } from '@/interfaces/Tag';
+import { Dispatch } from '@@/plugin-dva/connect';
+import CoverUpload from './CoverUpload/coverUpload';
 
-interface EditFormProps {
+interface ArticleFormProps {
+  /**
+   * @type {boolean} loading 提交状态
+   */
   articleDetail?: ArticleDetail | undefined;
-  allCategories?: Category[] | undefined;
-  loading?: boolean;
-  updating?: boolean;
+  allTags: TagInterface[];
+  allCategories: Category[];
+  dispatch: Dispatch;
+  submitting?: boolean;
   submitTitle?: string;
   onFinish?: (values: Store) => void;
 }
@@ -37,14 +43,37 @@ const formItemLayout = {
   wrapperCol: { span: 17 },
 };
 
+const colors = [
+  '#f50',
+  '#2db7f5',
+  '#87d068',
+  '#108ee9',
+  'magenta',
+  'red',
+  'volcano',
+  'orange',
+  'gold',
+  'lime',
+  'green',
+  'cyan',
+  'blue',
+  'geekblue',
+  'purple',
+];
+
 // 初始化Markdown解析器
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-const uploadUrl = '/api/upload/file';
-
-const ArticleEditForm: React.FC<EditFormProps> = (props) => {
-  const { articleDetail, allCategories, updating, onFinish, submitTitle } = props;
-  const [articleTags, setArticleTags] = useState<string[]>([]);
+const ArticleForm: React.FC<ArticleFormProps> = (props) => {
+  const {
+    articleDetail,
+    allCategories,
+    submitting,
+    onFinish,
+    submitTitle,
+    dispatch,
+    allTags,
+  } = props;
   const [coverImage, setCoverImage] = useState('');
   const [form] = Form.useForm();
 
@@ -61,49 +90,40 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
     // console.log('Failed:', errorInfo);
   };
 
-  // @ts-ignore
-  const uploadProps: UploadProps = {
-    action: uploadUrl,
-    onChange: (info) => {
-      // eslint-disable-next-line no-shadow
-      let fileList = [...info.fileList];
-      fileList = fileList.slice(-1);
-      fileList = fileList.map((file) => {
-        if (file.response) {
-          // eslint-disable-next-line no-param-reassign
-          file.url = file.response.data;
-        }
-        return file;
-      });
-      const url = fileList[0] ? fileList[0].url || '' : '';
-      form.setFieldsValue({
-        articleCoverImage: url,
-      });
-      setCoverImage(url);
-    },
-    listType: 'picture',
-    multiple: true,
+  const tagRender = ({ closable, label, onClose }: any) => {
+    return (
+      <Tag
+        color={colors[Math.floor(Math.random() * colors.length)]}
+        closable={closable}
+        onClose={onClose}
+        style={{ marginTop: 2, marginBottom: 2, marginRight: 4 }}
+      >
+        {label}
+      </Tag>
+    );
   };
 
   useEffect(() => {
     form.setFieldsValue({
       articleTitle: articleDetail?.articleTitle,
-      articleTags: articleDetail?.articleTags,
+      articleTags: articleDetail?.articleTags.map((item) => item.tagName),
       articleCategoryId: articleDetail?.articleCategoryId,
       articleContent: articleDetail?.articleContent,
       articleStatus: articleDetail?.articleStatus,
       enableComment: articleDetail?.enableComment,
       articleCoverImage: articleDetail?.articleCoverImage,
     });
-    setCoverImage(articleDetail?.articleCoverImage || '');
-    setArticleTags(articleDetail?.articleTags.map((item) => item.tagName) || []);
+    // setCoverImage(articleDetail?.articleCoverImage || '');
   }, [articleDetail]);
 
   useEffect(() => {
-    form.setFieldsValue({
-      articleTags,
+    dispatch({
+      type: 'category/fetchAllCategory',
     });
-  }, [articleTags]);
+    dispatch({
+      type: 'tag/fetchAllTag',
+    });
+  }, []);
 
   return (
     <Form
@@ -130,14 +150,13 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
         rules={[{ required: true, message: '请选择文章分类!' }]}
       >
         <Select style={{ width: '100%' }} placeholder="请选择文章分类">
-          {typeof allCategories !== 'undefined' &&
-            allCategories.map((item) => {
-              return (
-                <Select.Option value={item.categoryId} key={item.categoryId}>
-                  {item.categoryName}
-                </Select.Option>
-              );
-            })}
+          {allCategories.map((item) => {
+            return (
+              <Select.Option value={item.categoryId} key={item.categoryId}>
+                {item.categoryName}
+              </Select.Option>
+            );
+          })}
         </Select>
       </Form.Item>
       <Form.Item
@@ -145,30 +164,31 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
         name="articleTags"
         rules={[{ required: false, message: '请输入文章标签!' }]}
       >
-        <EditableTagGroup tags={articleTags} setTags={setArticleTags} />
+        <Select
+          tagRender={tagRender}
+          mode="tags"
+          style={{ width: '100%' }}
+          options={allTags.map((item) => ({
+            label: item.tagName,
+            value: item.tagName,
+          }))}
+          placeholder="请选择或新建标签"
+        />
       </Form.Item>
       <Form.Item
         label="封面"
         name="articleCoverImage"
         rules={[{ required: false, message: '请上传文章封面!' }]}
       >
-        <>
-          <Card
-            hoverable
-            style={{ width: 400, marginBottom: '20px' }}
-            cover={<img alt="封面" src={coverImage} />}
-          >
-            <Card.Meta
-              title={form.getFieldValue('articleTitle')}
-              description={form.getFieldValue('articleCoverImage')}
-            />
-          </Card>
-          <Upload {...uploadProps}>
-            <Button>
-              <UploadOutlined /> 点击上传
-            </Button>
-          </Upload>
-        </>
+        <CoverUpload
+          coverImage={coverImage}
+          setCoverImage={(imageUrl) => {
+            form.setFieldsValue({
+              articleCoverImage: imageUrl,
+            });
+            setCoverImage(imageUrl);
+          }}
+        />
       </Form.Item>
       <Form.Item
         label="状态"
@@ -193,7 +213,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
           wrapperCol: { span: 20 },
         }}
         name="articleContent"
-        rules={[{ required: false, message: '请输入文章内容!' }]}
+        rules={[{ required: true, message: '请输入文章内容!' }]}
       >
         <MdEditor
           placeholder="请输入文章内容"
@@ -204,7 +224,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
         />
       </Form.Item>
       <Form.Item {...tailLayout}>
-        <Button block type="primary" htmlType="submit" loading={updating}>
+        <Button block type="primary" htmlType="submit" loading={submitting}>
           {submitTitle || '更新文章'}
         </Button>
       </Form.Item>
@@ -212,4 +232,7 @@ const ArticleEditForm: React.FC<EditFormProps> = (props) => {
   );
 };
 
-export default ArticleEditForm;
+export default connect(({ tag, category }: ConnectState) => ({
+  allTags: tag.allTag || [],
+  allCategories: category.allCategory || [],
+}))(ArticleForm);
