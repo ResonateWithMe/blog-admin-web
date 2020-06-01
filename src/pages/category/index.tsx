@@ -3,30 +3,62 @@
  * @author ShiLin
  * @date 2020/5/15 11:30
  */
-import React, { useRef, useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Drawer } from 'antd';
-import ProTable, { ProColumns, TableDropdown } from '@ant-design/pro-table';
+import React, { useEffect, useRef, useState } from 'react';
+import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Button, Drawer, Modal } from 'antd';
+import ProTable, { ProColumns, TableDropdown, ActionType } from '@ant-design/pro-table';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { findCategoryList } from '@/services/category';
 import { Category } from '@/interfaces/Category';
 import { FormInstance } from 'antd/es/form';
+import { connect } from 'umi';
+import { ConnectState } from '@/models/connect';
+import { Dispatch } from '@@/plugin-dva/connect';
 
-export default () => {
+interface PropsType {
+  dispatch: Dispatch;
+  updating: boolean;
+  adding: boolean;
+  deleting: boolean;
+}
+
+const CategoryPage: React.FC<PropsType> = (props) => {
+  const { dispatch, updating, adding, deleting } = props;
   const editForm = useRef<FormInstance>();
+  const tableRef = useRef<ActionType>();
   const [addVisible, setAddVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
 
   const addRecord = (params: {}) => {
-    console.log(params);
+    dispatch({
+      type: 'category/fetchAdd',
+      payload: params,
+    });
+    setAddVisible(false);
   };
 
   const editRecord = (params: {}) => {
-    console.log(params);
+    dispatch({
+      type: 'category/fetchUpdate',
+      payload: params,
+    });
+    setEditVisible(false);
   };
 
   const delRecord = (params: {}) => {
-    console.log(params);
+    Modal.confirm({
+      title: '删除提示',
+      icon: <ExclamationCircleOutlined />,
+      content: '您想要删除这篇文章？',
+      onOk() {
+        dispatch({
+          type: 'category/fetchDel',
+          payload: {
+            ids: [params],
+          },
+        });
+      },
+    });
   };
 
   const columns: ProColumns<Category>[] = [
@@ -34,7 +66,7 @@ export default () => {
       title: '序号',
       dataIndex: 'index',
       valueType: 'indexBorder',
-      width: 100,
+      width: 72,
     },
     {
       title: '分类ID',
@@ -73,6 +105,10 @@ export default () => {
         },
       ],
       width: 200,
+      // TODO：图标选择
+      /* renderFormItem() {
+        return <Input placeholder="请选择标签"/>;
+      }, */
     },
     {
       title: '分类排序',
@@ -117,6 +153,13 @@ export default () => {
     },
   ];
 
+  useEffect(() => {
+    if (updating || adding || deleting) {
+      return tableRef?.current?.reload;
+    }
+    return undefined;
+  }, [updating, adding, deleting]);
+
   return (
     <PageHeaderWrapper>
       <Drawer title="新增" width={600} onClose={() => setAddVisible(false)} visible={addVisible}>
@@ -142,6 +185,7 @@ export default () => {
       </Drawer>
       <ProTable<Category>
         columns={columns}
+        actionRef={tableRef}
         request={async (params = {}) => {
           const data = await findCategoryList({
             currentPage: params.current,
@@ -165,3 +209,9 @@ export default () => {
     </PageHeaderWrapper>
   );
 };
+
+export default connect(({ loading }: ConnectState) => ({
+  updating: loading.effects['category/fetchUpdate'] || false,
+  adding: loading.effects['category/fetchAdd'] || false,
+  deleting: loading.effects['category/fetchDel'] || false,
+}))(CategoryPage);

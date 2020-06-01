@@ -118,7 +118,7 @@ const ArticleForm: React.FC<ArticleFormProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'category/fetchAllCategory',
+      type: 'category/fetchAll',
     });
     dispatch({
       type: 'tag/fetchAllTag',

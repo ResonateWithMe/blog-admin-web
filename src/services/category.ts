@@ -20,3 +20,24 @@ export async function findCategoryAll(): Promise<Result<Category[]>> {
     method: 'GET',
   });
 }
+
+export async function add(params: any): Promise<Result<Category[]>> {
+  return request('/api/category/add', {
+    method: 'PUT',
+    data: params,
+  });
+}
+
+export async function update(params: any): Promise<Result<Category[]>> {
+  return request('/api/category/update', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function del(params: any): Promise<Result<Category[]>> {
+  return request('/api/category/delete', {
+    method: 'DELETE',
+    params,
+  });
+}

@@ -154,7 +154,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       },
     });
     dispatch({
-      type: 'category/fetchAllCategory',
+      type: 'category/fetchAll',
     });
     dispatch({
       type: 'tag/fetchAllTag',
@@ -297,7 +297,11 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
                   <span>
                     {item.articleTags &&
                       item.articleTags.split(',').map((tag) => {
-                        return <Tag key={tag}>{tag}</Tag>;
+                        return (
+                          <Tag style={{ marginBottom: 8 }} key={tag}>
+                            {tag}
+                          </Tag>
+                        );
                       })}
                   </span>
                 }

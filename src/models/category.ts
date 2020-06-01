@@ -5,7 +5,8 @@
  */
 import { Effect, Reducer } from '@@/plugin-dva/connect';
 import { Category } from '@/interfaces/Category';
-import { findCategoryAll, findCategoryList } from '@/services/category';
+import { add, findCategoryAll, findCategoryList, update, del } from '@/services/category';
+import { message } from 'antd';
 
 export interface CategoryStateType {
   allCategory: Category[];
@@ -16,8 +17,11 @@ export interface CategoryModelType {
   namespace: 'category';
   state: CategoryStateType;
   effects: {
-    fetchAllCategory: Effect;
-    fetchCategoryList: Effect;
+    fetchAll: Effect;
+    fetchList: Effect;
+    fetchAdd: Effect;
+    fetchUpdate: Effect;
+    fetchDel: Effect;
   };
   reducers: {
     saveAllCategory: Reducer<CategoryStateType>;
@@ -32,19 +36,43 @@ const CategoryModel: CategoryModelType = {
     categoryList: [],
   },
   effects: {
-    *fetchAllCategory({ payload }, { call, put }) {
+    *fetchAll({ payload }, { call, put }) {
       const response = yield call(findCategoryAll, payload);
       yield put({
         type: 'saveAllCategory',
         payload: response.data,
       });
     },
-    *fetchCategoryList({ payload }, { call, put }) {
+    *fetchList({ payload }, { call, put }) {
       const response = yield call(findCategoryList, payload);
       yield put({
         type: 'saveCategoryList',
         payload: response.data.data,
       });
+    },
+    *fetchAdd({ payload }, { call }) {
+      const response = yield call(add, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
+    },
+    *fetchUpdate({ payload }, { call }) {
+      const response = yield call(update, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
+    },
+    *fetchDel({ payload }, { call }) {
+      const response = yield call(del, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
     },
   },
   reducers: {
