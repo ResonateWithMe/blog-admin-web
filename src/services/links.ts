@@ -3,7 +3,7 @@
  * @author ShiLin
  * @date 2020/5/22 10:35
  */
-import request from 'umi-request';
+import request from '@/utils/request';
 import { PaginationParams } from '@/interfaces/PaginationParams';
 
 export async function findLinksList(params: PaginationParams) {

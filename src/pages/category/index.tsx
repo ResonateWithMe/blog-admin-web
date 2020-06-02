@@ -5,7 +5,7 @@
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Drawer, Modal } from 'antd';
+import { Button, Drawer, Input, Modal } from 'antd';
 import ProTable, { ProColumns, TableDropdown, ActionType } from '@ant-design/pro-table';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { findCategoryList } from '@/services/category';
@@ -34,7 +34,6 @@ const CategoryPage: React.FC<PropsType> = (props) => {
       type: 'category/fetchAdd',
       payload: params,
     });
-    setAddVisible(false);
   };
 
   const editRecord = (params: {}) => {
@@ -42,7 +41,6 @@ const CategoryPage: React.FC<PropsType> = (props) => {
       type: 'category/fetchUpdate',
       payload: params,
     });
-    setEditVisible(false);
   };
 
   const delRecord = (params: {}) => {
@@ -53,9 +51,7 @@ const CategoryPage: React.FC<PropsType> = (props) => {
       onOk() {
         dispatch({
           type: 'category/fetchDel',
-          payload: {
-            ids: [params],
-          },
+          payload: [params],
         });
       },
     });
@@ -71,15 +67,17 @@ const CategoryPage: React.FC<PropsType> = (props) => {
     {
       title: '分类ID',
       dataIndex: 'categoryId',
-      hideInForm: true,
       hideInSearch: true,
+      width: 200,
       rules: [
         {
           required: true,
           message: '此项为必填项',
         },
       ],
-      width: 200,
+      renderFormItem() {
+        return editVisible && <Input disabled />;
+      },
     },
     {
       title: '分类名称',
@@ -113,7 +111,6 @@ const CategoryPage: React.FC<PropsType> = (props) => {
     {
       title: '分类排序',
       dataIndex: 'categoryRank',
-      hideInForm: true,
       hideInSearch: true,
       rules: [
         {
@@ -155,6 +152,12 @@ const CategoryPage: React.FC<PropsType> = (props) => {
 
   useEffect(() => {
     if (updating || adding || deleting) {
+      if (adding) {
+        setAddVisible(false);
+      }
+      if (updating) {
+        setEditVisible(false);
+      }
       return tableRef?.current?.reload;
     }
     return undefined;
@@ -166,6 +169,7 @@ const CategoryPage: React.FC<PropsType> = (props) => {
         <ProTable<Category>
           columns={columns}
           type="form"
+          loading={adding}
           onSubmit={(params) => addRecord(params)}
         />
       </Drawer>
@@ -179,6 +183,7 @@ const CategoryPage: React.FC<PropsType> = (props) => {
         <ProTable<Category>
           columns={columns}
           formRef={editForm}
+          loading={updating}
           type="form"
           onSubmit={(params) => editRecord(params)}
         />
@@ -186,16 +191,6 @@ const CategoryPage: React.FC<PropsType> = (props) => {
       <ProTable<Category>
         columns={columns}
         actionRef={tableRef}
-        request={async (params = {}) => {
-          const data = await findCategoryList({
-            currentPage: params.current,
-            pageSize: params.pageSize,
-          });
-          return {
-            data: data.data.data,
-            total: data.data.totalCount,
-          };
-        }}
         rowKey="categoryId"
         dateFormatter="string"
         headerTitle="文章分类列表"
@@ -205,6 +200,17 @@ const CategoryPage: React.FC<PropsType> = (props) => {
             新建
           </Button>,
         ]}
+        request={async (params = {}) => {
+          const data = await findCategoryList({
+            ...params,
+            currentPage: params.current,
+            pageSize: params.pageSize,
+          });
+          return {
+            data: data.data.data,
+            total: data.data.totalCount,
+          };
+        }}
       />
     </PageHeaderWrapper>
   );

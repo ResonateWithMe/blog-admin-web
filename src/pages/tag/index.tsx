@@ -8,10 +8,16 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Drawer } from 'antd';
 import ProTable, { ActionType, ProColumns, TableDropdown } from '@ant-design/pro-table';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import { Category } from '@/interfaces/Category';
 import { findTagList } from '@/services/tag';
+import { Tag } from '@/interfaces/Tag';
 
-const columns: ProColumns<any>[] = [
+const columns: ProColumns<Tag>[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'indexBorder',
+    width: 72,
+  },
   {
     title: '标签ID',
     dataIndex: 'tagId',
@@ -47,9 +53,16 @@ const columns: ProColumns<any>[] = [
     title: '操作',
     valueType: 'option',
     render: (text, row, _, action) => [
-      <a href={row.html_url} target="_blank" rel="noopener noreferrer">
-        查看
-      </a>,
+      <Button
+        type="link"
+        onClick={() => {
+          // setEditVisible(true);
+          // const { current } = editForm;
+          // return current?.setFieldsValue(row);
+        }}
+      >
+        编辑
+      </Button>,
       <TableDropdown
         onSelect={() => action.reload()}
         menus={[
@@ -71,9 +84,9 @@ export default () => {
   return (
     <PageHeaderWrapper>
       <Drawer title="新增" width={600} onClose={() => setVisible(false)} visible={visible}>
-        <ProTable<Category> columns={columns} type="form" onSubmit={addRecord} />
+        <ProTable<Tag> columns={columns} type="form" onSubmit={addRecord} />
       </Drawer>
-      <ProTable<Category>
+      <ProTable<Tag>
         columns={columns}
         actionRef={actionRef}
         request={async (params = {}) => {

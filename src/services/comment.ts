@@ -3,7 +3,7 @@
  * @author ShiLin
  * @date 2020/5/22 9:59
  */
-import request from 'umi-request';
+import request from '@/utils/request';
 import { PaginationParams } from '@/interfaces/PaginationParams';
 
 export async function findCommentList(params: PaginationParams) {

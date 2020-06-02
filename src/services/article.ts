@@ -1,4 +1,4 @@
-import request from 'umi-request';
+import request from '@/utils/request';
 import { Result } from '@/interfaces/Result';
 import { Article } from '@/interfaces/Article';
 import { PaginationParams } from '@/interfaces/PaginationParams';
