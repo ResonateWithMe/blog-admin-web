@@ -105,7 +105,7 @@ const CategoryPage: React.FC<PropsType> = (props) => {
       width: 200,
       // TODO：图标选择
       /* renderFormItem() {
-        return <Input placeholder="请选择标签"/>;
+        return <Button icon={<DownloadOutlined/>} style={{ width: 60 }}/>;
       }, */
     },
     {

@@ -19,3 +19,24 @@ export async function findAllTag(): Promise<Result<any>> {
     method: 'GET',
   });
 }
+
+export async function add(params: any): Promise<any> {
+  return request('/api/tag/add', {
+    method: 'PUT',
+    data: params,
+  });
+}
+
+export async function update(params: any): Promise<any> {
+  return request('/api/tag/update', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function del(params: number[]): Promise<any> {
+  return request('/api/tag/delete', {
+    method: 'DELETE',
+    data: params,
+  });
+}

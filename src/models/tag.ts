@@ -5,7 +5,8 @@
  */
 import { Effect, Reducer } from '@@/plugin-dva/connect';
 import { Tag } from '@/interfaces/Tag';
-import { findTagList, findAllTag } from '@/services/tag';
+import { findTagList, findAllTag, add, del, update } from '@/services/tag';
+import { message } from 'antd';
 
 export interface TagStateType {
   allTag: Tag[];
@@ -16,8 +17,11 @@ export interface TagModelType {
   namespace: 'tag';
   state: TagStateType;
   effects: {
-    fetchAllTag: Effect;
-    fetchTagList: Effect;
+    fetchAll: Effect;
+    fetchList: Effect;
+    fetchAdd: Effect;
+    fetchUpdate: Effect;
+    fetchDel: Effect;
   };
   reducers: {
     saveAllTag: Reducer<TagStateType>;
@@ -32,19 +36,43 @@ const TagModel: TagModelType = {
     tagList: [],
   },
   effects: {
-    *fetchAllTag({ payload }, { call, put }) {
+    *fetchAll({ payload }, { call, put }) {
       const response = yield call(findAllTag, payload);
       yield put({
         type: 'saveAllTag',
         payload: response.data,
       });
     },
-    *fetchTagList({ payload }, { call, put }) {
+    *fetchList({ payload }, { call, put }) {
       const response = yield call(findTagList, payload);
       yield put({
         type: 'saveTagList',
         payload: response.data.data,
       });
+    },
+    *fetchAdd({ payload }, { call }) {
+      const response = yield call(add, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
+    },
+    *fetchUpdate({ payload }, { call }) {
+      const response = yield call(update, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
+    },
+    *fetchDel({ payload }, { call }) {
+      const response = yield call(del, payload);
+      if (response.code !== 200) {
+        message.error(`${response.message}`);
+        return;
+      }
+      message.success(`${response.message}`);
     },
   },
   reducers: {

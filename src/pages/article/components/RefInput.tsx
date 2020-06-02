@@ -42,7 +42,7 @@ const RefInput: React.FC<InputRefProps> = (props) => {
 
   useEffect(() => {
     dispatch({
-      type: 'tag/fetchAllTag',
+      type: 'tag/fetchAll',
     });
   }, []);
 
@@ -77,5 +77,5 @@ const RefInput: React.FC<InputRefProps> = (props) => {
 
 export default connect(({ tag, loading }: ConnectState) => ({
   tagList: tag.tagList || [],
-  loading: loading.effects['tag/fetchAllTag'] || false,
+  loading: loading.effects['tag/fetchAll'] || false,
 }))(RefInput);

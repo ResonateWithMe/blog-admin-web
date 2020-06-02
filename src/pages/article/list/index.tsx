@@ -157,7 +157,7 @@ const ListSearchArticles: FC<ListSearchArticlesProps> = (props) => {
       type: 'category/fetchAll',
     });
     dispatch({
-      type: 'tag/fetchAllTag',
+      type: 'tag/fetchAll',
     });
   }, []);
 
