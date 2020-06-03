@@ -15,12 +15,11 @@ const columns: ProColumns<any>[] = [
     title: '序号',
     dataIndex: 'index',
     valueType: 'indexBorder',
-    width: 120,
+    width: 100,
   },
   {
     title: '标题',
     dataIndex: 'linkName',
-    copyable: true,
     ellipsis: true,
     width: 200,
     rules: [
@@ -29,12 +28,12 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '链接地址',
     dataIndex: 'linkUrl',
-    copyable: true,
+    // copyable: true,
+    valueType: 'text',
     ellipsis: true,
     width: 200,
     rules: [
@@ -43,24 +42,20 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '链接类型',
     dataIndex: 'linkType',
-    copyable: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '链接描述',
     dataIndex: 'linkDescription',
-    copyable: true,
     ellipsis: true,
     width: 200,
     rules: [
@@ -74,7 +69,6 @@ const columns: ProColumns<any>[] = [
   {
     title: '链接排序',
     dataIndex: 'linkRank',
-    copyable: true,
     rules: [
       {
         required: true,
@@ -89,9 +83,10 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'createTime',
     valueType: 'dateTime',
     hideInForm: true,
+    hideInSearch: true,
   },
   {
-    title: 'option',
+    title: '操作',
     valueType: 'option',
     render: (text, row, _, action) => [
       <a href={row.linkUrl} target="_blank" rel="noopener noreferrer">

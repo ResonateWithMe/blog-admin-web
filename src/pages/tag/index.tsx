@@ -97,6 +97,7 @@ const TagPage: React.FC<PropsType> = (props) => {
       dataIndex: 'createTime',
       valueType: 'dateTime',
       hideInForm: true,
+      hideInSearch: true,
     },
     {
       title: '操作',
@@ -160,6 +161,7 @@ const TagPage: React.FC<PropsType> = (props) => {
         />
       </Drawer>
       <ProTable<Tag>
+        actionRef={tableRef}
         columns={columns}
         rowKey="tagId"
         dateFormatter="string"
@@ -187,7 +189,7 @@ const TagPage: React.FC<PropsType> = (props) => {
 };
 
 export default connect(({ loading }: ConnectState) => ({
-  updating: loading.effects['category/fetchUpdate'] || false,
-  adding: loading.effects['category/fetchAdd'] || false,
-  deleting: loading.effects['category/fetchDel'] || false,
+  updating: loading.effects['tag/fetchUpdate'] || false,
+  adding: loading.effects['tag/fetchAdd'] || false,
+  deleting: loading.effects['tag/fetchDel'] || false,
 }))(TagPage);

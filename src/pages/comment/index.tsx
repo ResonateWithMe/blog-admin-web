@@ -11,9 +11,14 @@ import { Comment } from '@/interfaces/Comment';
 
 const columns: ProColumns<any>[] = [
   {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'indexBorder',
+    width: 72,
+  },
+  {
     title: '评论者',
     dataIndex: 'commentator',
-    copyable: true,
     ellipsis: true,
     width: 120,
     rules: [
@@ -22,7 +27,6 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '邮箱',
@@ -36,7 +40,6 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '网站链接',
@@ -50,12 +53,10 @@ const columns: ProColumns<any>[] = [
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '评论内容',
     dataIndex: 'commentBody',
-    copyable: true,
     ellipsis: true,
     rules: [
       {
@@ -64,7 +65,6 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '评论IP',
@@ -82,7 +82,6 @@ const columns: ProColumns<any>[] = [
   {
     title: '回复内容',
     dataIndex: 'replyBody',
-    copyable: true,
     ellipsis: true,
     rules: [
       {
@@ -91,19 +90,16 @@ const columns: ProColumns<any>[] = [
       },
     ],
     width: 200,
-    hideInSearch: true,
   },
   {
     title: '评论状态',
     dataIndex: 'commentStatus',
-    copyable: true,
     rules: [
       {
         required: true,
         message: '此项为必填项',
       },
     ],
-    hideInSearch: true,
   },
   {
     title: '创建时间',
@@ -111,9 +107,10 @@ const columns: ProColumns<any>[] = [
     dataIndex: 'commentCreateTime',
     valueType: 'dateTime',
     hideInForm: true,
+    hideInSearch: true,
   },
   {
-    title: 'option',
+    title: '操作',
     valueType: 'option',
     render: (text, row, _, action) => [
       <a href={row.websiteUrl} target="_blank" rel="noopener noreferrer">
